@@ -1,0 +1,16 @@
+{
+  "name": "caption-meet",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "description": "LAN audio/video meetings with per-participant Chinese live captions, built on RTCPilot",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check:deps": "bash scripts/check-deps.sh",
+    "docs:i18n:check": "node scripts/docs-i18n-check.mjs",
+    "docs:verify": "node scripts/docs-verify.mjs",
+    "test": "node --test scripts/docs-verify.test.mjs"
+  }
+}

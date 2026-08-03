@@ -1,0 +1,26 @@
+# RTCPilot vendor build output (sources live under third_party/RTCPilot)
+third_party/RTCPilot/build/
+third_party/RTCPilot/artifacts/
+third_party/RTCPilot/.xmake/
+
+# Local build / IDE artifacts
+build/
+.xmake/
+cmake-build-*/
+out/
+dist/
+node_modules/
+
+# Local agent tooling
+/.agents/
+/image.png
+
+# OS / editor
+.DS_Store
+*.user
+.vscode/
+.idea/
+
+# Logs and temp
+*.log
+*.tmp

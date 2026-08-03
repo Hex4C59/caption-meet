@@ -1,0 +1,75 @@
+log:
+  # log level: debug, info, warn, error
+  log_level: "info"
+  # log path
+  log_path: "server1.log"
+
+event_log:
+  rtc_log_path: "rtc_event1.log"
+  rtc_stream_log_path: "rtc_stream1.log"
+
+#websocket server
+websocket_server:
+  # wss enable only when you have valid certificate and key files
+  ssl_enable: false
+  cert_path: "certificate.crt"
+  key_path: "private.key"
+  listen_ip: "0.0.0.0"
+  port: 7543
+
+#rtmp server
+rtmp_server:
+  enable: true
+  listen_ip: "0.0.0.0"
+  port: 1935
+
+#http-flv server
+httpflv_server:
+  enable: true
+  listen_ip: "0.0.0.0"
+  port: 8080
+
+#websocket stream server (flv over websocket)
+ws_stream_server:
+  enable: true
+  listen_ip: "0.0.0.0"
+  port: 8443
+
+#webrtc
+#candidates: [{nettype, ip, port}]
+candidates:
+  - nettype: "udp"
+    candidate_ip: "192.168.1.221"
+    listen_ip: "0.0.0.0"
+    port: 5001
+  - nettype: "udp"
+    candidate_ip: "192.168.1.221"
+    listen_ip: "0.0.0.0"
+    port: 6001
+
+cert_path: "certificate.crt"
+key_path: "private.key"
+
+whip_server:
+  enable: true
+  ssl_enable: false
+  cert_path: "certificate.crt"
+  key_path: "private.key"
+  listen_ip: "0.0.0.0"
+  port: 6543
+
+downlink_discard_percent: 0
+uplink_discard_percent: 0
+
+pilot_center:
+  enable: true
+  host: "192.168.1.221"
+  port: 9443
+  subpath: "/pilot/center"
+
+rtc_relay:
+  relay_server_ip: "192.168.1.221"
+  relay_udp_start: 20000
+  relay_udp_end: 29999
+  send_discard_percent: 0
+  recv_discard_percent: 0
