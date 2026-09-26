@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CaptionMeet media fixture</title>
+<style>
+  body { margin: 24px; font: 16px sans-serif; background: #f3f5f7; color: #202329; }
+  h1 { font-size: 22px; }
+  #media { display: flex; flex-wrap: wrap; gap: 16px; }
+  figure { margin: 0; max-width: 100%; }
+  canvas, video { display: block; width: 320px; max-width: 100%; aspect-ratio: 16 / 9; background: #202329; }
+  figcaption { margin: 8px 0; }
+  button { padding: 8px 16px; }
+  #controls { display: flex; flex-wrap: wrap; gap: 8px; }
+  #status { overflow-wrap: anywhere; }
+  [hidden] { display: none !important; }
+</style>
+<h1>CaptionMeet media fixture</h1>
+<div id="controls">
+  <button id="start">Start synthetic media</button>
+  <button id="join" hidden disabled>Join</button>
+  <button id="leave" disabled>Leave</button>
+  <button id="collect" disabled>Collect 10-minute stats</button>
+  <button id="export-stats">Export stats</button>
+</div>
+<p id="status" role="status">Idle</p>
+<div id="media"></div>
+<script type="module" src="./browser-client.mjs"></script>
+</html>
