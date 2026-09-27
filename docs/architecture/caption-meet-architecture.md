@@ -8,7 +8,7 @@ English | [中文](caption-meet-architecture.zh.md)
 - Authority: proposed module boundaries, dependency rules, contracts and resource ownership; not implementation approval
 - Related: [PRD](../product-requirements.md), [gates](../reference/architecture-gates.md), [ADR 0001](../decisions/0001-vendor-rtcpilot-in-tree.md), [governance](../guides/architecture-governance.md)
 
-> **Scope transition (2026-09-26):** The maintainer confirmed three-person LAN audio/video meetings with live captions; see the [current PRD](../product-requirements.md). The coaching workflow, one-human constraint and mandatory AI reply path below are superseded product assumptions, not meeting implementation instructions. Existing ownership, cancellation, security and compatibility constraints remain relevant; module APIs and contracts are still Proposed/Outline. WI-002 gathers build/media evidence before adapting the design. The external VoiceAgent policy is unchanged.
+> **Current applicability (2026-09-26):** This document retains the constraints applicable to the confirmed three-person LAN meeting scope and explicitly marks unresolved meeting design. Modules remain Planned/Proposed and contracts remain Outline. The complete [historical coaching design](../archive/2026-09-26-coaching-architecture.md) preserves the superseded Practice APIs, single-human workflow and AI spoken-reply path; consult it only for design history or legacy compatibility. The [PRD](../product-requirements.md) owns product scope; [ACTIVE](../../ACTIVE.md) owns the sole current WI and execution conditions. Evidence already obtained in WI-002–WI-004 is summarized in §2.
 
 <a id="task-reading-guide"></a>
 
@@ -16,13 +16,13 @@ English | [中文](caption-meet-architecture.zh.md)
 
 This is the single task-to-section routing index; AGENTS and the documentation index link here rather than duplicate it. Keep existing section numbers stable. Read the selected sections using headings/search and bounded file reads; a link does not require loading the whole document.
 
-For architecture-impacting work, first read §1 (status/scope; the overview diagram is optional), §3 (identities) and §6 (dependency invariants). Then select routes below, cumulatively when tasks overlap. Pure copy/translation changes need the affected passage and bilingual policy, not every architecture route.
+For architecture-impacting work, first read §1 (status/scope), §3 (identities) and §6 (dependency invariants). Then select routes below, cumulatively when tasks overlap. Pure copy/translation changes need the affected passage and bilingual policy, not every architecture route.
 
-- **Browser practice flow:** §4.1–4.3, C-01/C-02/C-06, browser ownership in §8 and relevant states/cleanup in §9. For user-visible work also read the PRD; do not infer acceptance from this proposal.
+- **Browser meeting flow:** §4.1–4.3, C-01/C-02/C-06, browser ownership in §8 and relevant states/cleanup in §9. For user-visible work also read the PRD; do not infer acceptance from this proposal.
 - **Business service / admission:** §4.4, §5.3–5.4, C-01/C-02/C-06, §8–10; consult `gate-session-admission` before non-local deployment.
 - **Session cleanup / reconnect / shutdown:** §5.1, §5.5–5.6, C-02/C-05/C-06, §8–9; use §11 lifecycle tests and `gate-sfu-lifecycle`.
 - **RTP / RTCP / forwarding / buffer ownership:** §5.6–5.7, C-03/C-05, §8–10, media acceptance in §11; consult `gate-media-capacity`.
-- **VoiceAgent / AI queue / interruption:** §5.8–5.10, C-03–C-06, §8–10 and voice tests in §11; also read the in-tree configuration guide's `voice_agent` section and affected bridge source. Consult `gate-voice-agent-bridge`.
+- **VoiceAgent / recognition suitability / legacy AI output:** §5.8–5.10, C-03–C-06, §8–10 and voice tests in §11; also read the in-tree configuration guide's `voice_agent` section and affected bridge source. Consult `gate-voice-agent-bridge`.
 - **Signaling / WHIP / room commands:** §5.2–5.5, C-02/C-05/C-06, §8–10 and WHIP regression acceptance in §11; consult signaling and admission gates.
 - **Cluster / legacy streaming:** §5.11 plus the touched room, transport or routing modules; C-03/C-05/C-06 and §8–10. Follow actual caller/callee evidence; the single-node proposal is not cluster certification.
 - **New public interface / module extraction:** affected §4/§5 modules, §6, matching C-01–C-06, §8–9, and §10 if trust, queues or persistence change. Read consumers and boundary tests, not just the new interface.
@@ -34,7 +34,7 @@ Expand reading when a contract references another invariant, ownership crosses m
 
 ## 1. Decision and scope
 
-Use a **modular C++ SFU monolith**, a browser client, an optional thin business service, and an external VoiceAgent service. Keep RTCPilot development in `third_party/RTCPilot`; do not restore a sibling-checkout requirement. Retain upstream licenses and provenance. The target architecture overview below supplements, but does not replace, the contracts and ownership rules in the text.
+The retained direction is a **modular C++ SFU monolith**, a planned browser client, an optional thin business service, and external VoiceAgent integration through RTCPilot. Keep RTCPilot development in `third_party/RTCPilot`; do not restore a sibling-checkout requirement. Retain upstream licenses and provenance. Recognition-only suitability remains unverified; a different integration strategy requires an explicit decision.
 
 Internal module boundaries are compile-time and ownership boundaries, not new network services. Start with the existing single libuv event loop. Do not introduce a generic event bus, service locator, microservice fleet, shared mutable session store, or a second ASR/LLM/TTS implementation.
 
@@ -44,59 +44,14 @@ The browser/server language and framework are **not selected** by this proposal.
 
 ### 1.1 Target architecture overview (Proposed)
 
-Modules correspond to sections 4–5: these are target boundaries, not completed source extraction. Solid edges denote narrow interface calls/control, thick edges media data, and dashed edges lifetime ownership. Arrows do not authorize reverse implementation includes. Return values, text events and callbacks are omitted for clarity.
+| Boundary | Current applicability | Unresolved meeting design |
+|----------|-----------------------|---------------------------|
+| Browser — `apps/web` | Planned presentation, application coordination and realtime adapter; no provider secrets | Device preview/join flow, application API and caption projection |
+| Trusted product control — optional `server` | Planned; media bypasses it; SFU must validate admission | Whether a separate service is needed; meeting/link authority, cap and empty-timer coordination |
+| SFU — `third_party/RTCPilot` | In-tree implementation with measured baseline results (§2); proposed internal seams in §5 | Module extraction, admission enforcement and complete lifecycle guarantees |
+| VoiceAgent — external via RTCPilot bridge | Existing integration policy; no embedded ASR/LLM/TTS implementation | Three independent inputs, recognition-only operation, interim/final semantics and failure isolation |
 
-```mermaid localized
-flowchart TB
-    subgraph WEB["Browser · apps/web · Planned"]
-        UI["Practice UI"]
-        PC["Practice controller"]
-        RTC["Realtime client<br/>Devices / PeerConnection / signaling"]
-        UI --> PC
-        PC --> RTC
-    end
-
-    SERVICE["Optional practice service · server · Planned<br/>Practice metadata / scoped admission credentials"]
-    PC -->|"Create / query / end practice"| SERVICE
-
-    subgraph SFU["In-tree C++ SFU · third_party/RTCPilot · Proposed modules / single libuv loop"]
-        RUNTIME["runtime<br/>Composition / loop / listeners / shutdown"]
-        SIGNAL["signaling<br/>protoo / WHIP adapters"]
-        AUTH["admission<br/>Identity / scope / permissions"]
-        ROOM["room_control<br/>Membership / publication metadata"]
-        REG["session_registry<br/>Sole transport owner"]
-        TRANS["rtc_transport<br/>ICE / DTLS / SRTP / tracks"]
-        ROUTER["media_router<br/>Routes / non-owning endpoint handles"]
-        VOICE["voice_session<br/>Generation / conversation / cancellation"]
-        ADAPTER["voice_adapter<br/>Protocol mapping / WebSocket"]
-        AI["ai_publisher<br/>Opus queue / RTP / pacing"]
-
-        SIGNAL -->|"Validate admission"| AUTH
-        SIGNAL -->|"Validated commands C-02"| ROOM
-        ROOM -->|"Create / negotiate / close"| REG
-        REG -.->|"Unique ownership"| TRANS
-        ROOM -->|"Maintain routes"| ROUTER
-        ROOM -.->|"Own session collection"| VOICE
-        VOICE -.->|"Unique ownership"| ADAPTER
-        VOICE -.->|"Unique ownership"| AI
-        TRANS ==>|"Receive packets / send ports C-03"| ROUTER
-        TRANS ==>|"Bound user audio"| VOICE
-        VOICE ==>|"Submit audio"| ADAPTER
-        ADAPTER ==>|"Typed audio events C-04"| VOICE
-        VOICE ==>|"Current-generation output frames"| AI
-        AI ==>|"Ordinary publication port"| ROUTER
-    end
-
-    EXTERNAL["External VoiceAgent service<br/>ASR / LLM / TTS"]
-    RTC -->|"Signaling / admission credential"| SIGNAL
-    RTC ==>|"Bidirectional WebRTC media"| TRANS
-    ADAPTER ==>|"External audio protocol / bidirectional WebSocket"| EXTERNAL
-```
-
-- **Media bypasses the business service.** Browser audio passes through the SFU; AI audio enters normal routing through the AI publisher and returns through RTC transport. Thick edges show the main path with single arrows; connections labeled bidirectional include return traffic, and the router sends back through transport send ports.
-- **Admission is not shared memory.** The optional service issues a credential, the browser carries it, and the SFU verifies it. No service-to-room-map mutation authority is implied.
-- **Composition is not a business call.** Runtime constructs and owns top-level modules and injects ports; its wiring edges are omitted to avoid clutter. Dashed edges highlight nested ownership only. Complete ownership is in section 8; cancellation/shutdown in C-05 and section 9.
-- **No hidden stack decision.** Cluster and legacy adapters are collapsed out of this overview but remain governed by section 5.11. Web/server technology remains undecided. New APIs and security capabilities remain Proposed / Outline.
+Browser media uses the SFU, not a peer-to-peer bypass or business-service relay. No edge in this overview specifies a new API, implemented owner or selected web/server framework. Meeting creation, admission and captions need their own contracts before implementation. The [old diagram](../archive/2026-09-26-coaching-architecture.md#11-target-architecture-overview-proposed) describes the superseded coaching/AI output proposal, not the meeting target.
 
 ## 2. Evidence and current gaps
 
@@ -105,21 +60,30 @@ The following paths are relative to `third_party/RTCPilot/`:
 - `src/RTCPilot.cpp`: composition root using `uv_default_loop()`, network listeners and optional cluster/legacy streaming services. No complete ordered application drain is established in this main path.
 - `src/ws_message/ws_message_session.cpp` and `src/webrtc_room/room_mgr.cpp`: JSON/protoo dispatch, including `join`, `push`, `pull`, `heartbeat`, and `textMessage`.
 - `src/webrtc_room/room.hpp` / `room.cpp`: `Room` combines membership, SDP, packet routing, cluster callbacks, voice text and AI RTP publication. This is the principal decomposition seam.
-- `src/webrtc_room/webrtc_server.cpp`: static username/address registries hold sessions. Cleanup traversing only address entries does not cover sessions awaiting their first STUN packet.
+- `src/webrtc_room/webrtc_server.cpp`: static username/address registries still hold sessions. WI-003 reproduced and repaired the address-only inactivity-expiry scan: expiry now considers the username registry and removes all matching indexes. This focused repair does not implement the sole-owner registry in §5.5 or establish room-wide cleanup safety; `RemoveSessionByRoomId` remains an explicitly unverified path in the [WI-003 report](../reports/2026-09-26-pre-stun-expiry.md#change-boundary).
 - `src/webrtc_room/webrtc_session.*`, `media_pusher.cpp`, `media_puller.hpp`: transport/security and track resources have overlapping shared ownership and borrowed callback pointers.
 - `src/webrtc_room/voice_agent/voice_agent.cpp`: external JSON/WebSocket adapter; an audio pusher creates a bridge. AI output is currently coordinated by room-wide state. Conversation IDs are narrowed to integers, which is not a safe general identifier contract.
 - `src/net/udp/udp_pub.hpp`, `src/utils/timer.cpp`, `src/webrtc_room/pilot_message_client.*`: pending I/O, timer and request callbacks need explicit cancellation/lifetime guarantees.
-- `CMakeLists.txt`: one broad executable source list and broad include visibility, not enforced module targets. `tests/` contains TCC, timer and protoo tests, not comprehensive lifecycle/bridge tests; executable targets are not proof of CTest registration.
+- `CMakeLists.txt`: one broad executable source list and broad include visibility, not enforced module targets. `tests/` includes TCC, timer, protoo and the focused `webrtc_session_expiry_test`; CTest still discovers zero tests in the recorded runs.
 
-These are source-inspection findings, not reproduced runtime failures. `apps/web` and `server` remain placeholders. Documentation checks do not demonstrate that the SFU builds or interoperates with VoiceAgent.
+The structural findings above are retained inspection evidence; the following reports establish narrower executed results:
+
+| Evidence | Established | Limits |
+|----------|-------------|--------|
+| [WI-002 baseline](../reports/2026-09-26-meeting-baseline.md) | Fresh Debug build and three direct tests; repaired same-ID publication/reply-callback behavior; 602.362-second synthetic three-browser, six-direction media run | Same-machine browsers; pinned upstream client production build still has 11 TypeScript errors; no graceful shutdown claim |
+| [WI-003 expiry](../reports/2026-09-26-pre-stun-expiry.md) | Pre-STUN failure reproduced then repaired; indexes, tracked objects and timers reclaimed; targeted ASan/UBSan regression and browser controls pass | Focused paths only; not a whole-SFU ownership, leak or shutdown audit |
+| [WI-004 LAN baseline](../reports/2026-09-26-lan-media-baseline.md) and [continuation](../reports/2026-09-26-physical-media-handoff.md) | Normal HTTPS/WSS trust, static/private-file boundaries, local synthetic/fake-device media and capture-state checks | Real cross-computer media, hardware and human observations remain unverified |
+| [WI-004 readiness](../reports/2026-09-26-two-device-readiness.md) | Read-only artifact, port and TLS recheck; existing fixture/handoff retained | No physical acceptance; current device conditions and next step live in [ACTIVE](../../ACTIVE.md) |
+
+`apps/web` and `server` remain placeholders; the baseline browser fixture is not a product UI. No report verifies captions, real VoiceAgent interoperability, weak-network behavior or full meeting acceptance. Executed evidence does not close gates without their recorded acceptance process. Documentation checks are separate from media evidence.
 
 ## 3. Domain identities and invariants
 
-- `PracticeSessionId`: product practice attempt; owned by the business service if deployed. It is not a WebRTC transport ID.
+- Product meeting identity, join-link validity and SFU room lifetime are distinct concepts. Their mapping and authoritative owner remain unresolved (C-01); the historical `PracticeSessionId` and its service ownership are not a meeting API.
 - `RoomId`: SFU membership and routing scope. `ParticipantId`: admitted identity within that scope; never trust a browser-provided ID as authorization.
 - `TransportId`: one negotiated WebRTC transport. `PublicationId`: one published media track. `SubscriptionId`: one receiver's subscription. Transport SSRCs are not durable publication identities.
 - `Generation`: monotonically increasing local incarnation of a participant connection. Reconnect creates a new generation; old callbacks cannot mutate the replacement.
-- `ConversationId`: opaque upstream string, never `atoi()`-converted. `TurnId` and `EventSequence` are local correlation fields and must not be represented as upstream guarantees.
+- Bridge identifiers, where supplied: `ConversationId` remains an opaque upstream string, never `atoi()`-converted. Historical `TurnId` and `EventSequence` are local correlation proposals, not upstream guarantees or a defined caption segment/revision schema (C-04).
 
 All cross-session handles carry scope and generation. A lookup failure or stale generation is a normal rejected operation, not permission to recreate a room. A publication belongs to exactly one participant; a subscription belongs to exactly one receiver; neither owns its transport.
 
@@ -127,33 +91,39 @@ All cross-session handles carry scope and generation. A lookup failure or stale 
 
 ## 4. Product-side modules (Planned)
 
-### 4.1 Practice UI — `apps/web`, presentation
+<a id="41-practice-ui--appsweb-presentation"></a>
 
-Owns rendering, user intent and transient view state. Calls only the practice controller. Must not parse protoo messages, retain provider secrets, administer SFU rooms, or treat displayed transcripts as durable truth.
+### 4.1 Browser presentation — `apps/web` (Planned)
 
-### 4.2 Practice controller — `apps/web`, application
+Retained responsibility: rendering, user intent and transient view state through an application boundary. It must not parse protoo messages, retain provider secrets, administer SFU rooms, or treat displayed captions as durable truth. The actual meeting UI API is unresolved; the [Practice UI](../archive/2026-09-26-coaching-architecture.md#41-practice-ui--appsweb-presentation) is historical.
 
-Owns one local practice lifecycle and its event subscriptions. Public operations: `startPractice(themeId)`, `setMicrophoneEnabled(enabled)`, `endPractice()`, `observePractice(listener)`. Observation returns a disposable subscription; it is not a general event bus.
+<a id="42-practice-controller--appsweb-application"></a>
 
-Depends on a small business-client port and a realtime-client port. Does not own DOM nodes or WebRTC objects. State distinguishes idle, starting, active, reconnecting, ending, ended and failed. Calling start while active fails with `InvalidState`; end is idempotent. Failed start compensates every acquired resource.
+### 4.2 Browser application coordination — `apps/web` (Planned)
+
+Retained responsibility: local lifecycle coordination and disposable event subscriptions, depending on narrow business/realtime ports. It does not own DOM nodes or WebRTC objects. Resource acquisition must be compensated on failed start, duplicate/illegal operations must have explicit outcomes, and local leave/cleanup must be idempotent.
+
+The [old practice operations and state list](../archive/2026-09-26-coaching-architecture.md#42-practice-controller--appsweb-application) are superseded, not renamed meeting APIs. Meeting preview/admission, reconnect, caption projection and end-state transitions remain to be defined against the PRD and C-01/C-04.
 
 ### 4.3 Realtime client — `apps/web`, browser adapter
 
-Owns `MediaStream`, microphone tracks, `RTCPeerConnection`, signaling socket, playback binding and reconnect timers. Operations: `connect(joinDescriptor)`, `publishMicrophone()`, `setMuted(enabled)`, `disconnect()`, plus typed connection/media/text events.
+Proposed owner of browser `MediaStream`, capture tracks, `RTCPeerConnection`, signaling socket, playback bindings and reconnect timers. Only this boundary understands browser WebRTC and RTCPilot wire formats; it translates protocol DTOs into application events and cannot mint membership permissions.
 
-Only this module understands browser WebRTC and the RTCPilot wire format. It translates protocol DTOs into application events. Disconnect stops tracks, removes listeners, closes peer/socket resources and releases playback. It cannot mint membership permissions.
+Disconnect must stop owned tracks, remove listeners, close peer/socket resources and release playback. Audio-only `publishMicrophone()` and the [old operation list](../archive/2026-09-26-coaching-architecture.md#43-realtime-client--appsweb-browser-adapter) do not define the required camera/preview lifecycle. The experimental capture fixture supplies evidence (§2), not an implemented product adapter or approved meeting API.
 
-### 4.4 Practice service — `server`, optional trusted control plane
+<a id="44-practice-service--server-optional-trusted-control-plane"></a>
 
-Owns practice metadata, theme selection and issuance of restricted join descriptors. Public use cases: `createPractice(themeId, requestId)`, `getPractice(practiceSessionId)`, `endPractice(practiceSessionId, requestId)`. Identity comes from authenticated context, not a request body assertion.
+### 4.4 Trusted product control — `server` (optional, Planned)
 
-A join descriptor contains the signaling endpoint, room/participant scope, expiry and a scoped admission credential. It contains no VoiceAgent/provider credential or arbitrary upstream URL supplied by the browser. Credentials require an SFU verifier before this is safe; this capability does not exist merely because the service issues a token.
+Whether meeting/link state and admission coordination need this separate service remains unresolved. The [practice service](../archive/2026-09-26-coaching-architecture.md#44-practice-service--server-optional-trusted-control-plane), theme lookup and `createPractice` operations are historical; they do not establish meeting ownership or endpoints.
 
-Service dependencies are narrow ports for theme lookup, admission issuance and optional practice storage. No database is required for the initial local spike. Persistent history, recordings and assessment engines are deferred. Without the service, only an explicitly local development mode using trusted fixed configuration is allowed; do not market it as an authenticated deployment.
+Retain the trust constraints: derive caller identity from validated context, never a browser assertion. If a join descriptor is used, it contains only a permitted signaling endpoint, room/participant scope, expiry and scoped admission credential; never provider credentials or an arbitrary browser-supplied upstream URL. A corresponding SFU verifier must exist; issuing a token alone provides no enforcement. Any future remote teardown uses an authenticated control boundary or bounded expiry, not shared room-map mutation.
+
+No database is required for the current fixture. The explicitly authorized trusted-LAN fixture uses fixed configuration without verified membership authorization; it is not an authenticated or production deployment. Meeting cap, link invalidation and the 60-second empty timer still require a product contract and owner (C-01).
 
 ## 5. SFU module boundaries (Proposed)
 
-All proposed SFU modules stay under `third_party/RTCPilot`. Names below are logical modules and future target names, not claims that directories already exist. Extract from current files incrementally, preserving the executable entry point.
+All proposed SFU modules stay under `third_party/RTCPilot`. Names below are logical modules and future target names, not claims that directories already exist. Sections 5.1–5.7 retain the proposed control/media seams; §5.8–5.10 distinguish bridge constraints from the superseded coaching output design. Any extraction needs its own scope approval and preserves the executable entry point.
 
 ### 5.1 Runtime composition — `runtime`
 
@@ -201,38 +171,40 @@ Depends on narrow packet-source/sink ports. Existing `MediaPusher` receive and `
 
 No JSON, persistence, business queries or AI network requests in the packet-forwarding path. RTCP feedback is routed through transport capabilities, not arbitrary access to another session's internals.
 
-### 5.8 Voice session — `voice_session`
+<a id="58-voice-session--voice_session"></a>
 
-Owns one coaching conversation's generation, cancellation scope, text sequence and output lifecycle. Operations: `start(binding)`, `submitAudio(frame)`, `stop(reason)`. Its binding includes room, participant, source publication and generation.
+### 5.8 Voice session — meeting adaptation unresolved
 
-Owns a VoiceAgent adapter and an AI publisher instance. Receives immutable typed bridge events, applies stale-event/correlation rules, and directs audio publication. Must not own product records or implement ASR/LLM/TTS. One participant disconnect cancels only its bound voice session.
+The [coaching voice-session design](../archive/2026-09-26-coaching-architecture.md#58-voice-session--voice_session) combined conversation, text sequence and AI output ownership. That bundle is historical. It does not define a meeting recognition owner or require an AI publisher for captions.
+
+Retain participant-scoped binding (room, participant, source publication, generation), cancellation and stale-event rejection. A participant disconnect must cancel only its bound work; recognition failure must not interrupt the call. Do not implement ASR/LLM/TTS inside this repo. Three independent inputs, caption ordering/finality and the actual recognition lifecycle need bridge evidence and a contract before this module can be adapted (C-04).
 
 ### 5.9 VoiceAgent adapter — `voice_adapter`
 
-Owns the external WebSocket, codec/protocol conversion, jitter-buffer resources, heartbeat and bounded reconnect attempts. Interface is `connect(binding)`, `sendAudio(frame)`, `close()` and a typed event sink for recognized text, reply text, turn start/end, audio and failure.
+Retained proposed seam: own the external WebSocket, codec/protocol conversion, jitter-buffer resources, heartbeat and bounded reconnect; expose typed events instead of provider JSON. It must not create virtual room users or mutate room maps. Protocol upgrades belong here and in fixture tests, not spread across UI and packet routing.
 
-Maps actual `input_audio_buffer.append`, `input.transcript`, `response.text`, `conversation.start`, `conversation.end`, `tts_opus_data` messages. It must not fabricate provider acknowledgements, transcript finality, turn cancellation support or replay guarantees that the upstream protocol does not supply.
+The existing bridge maps `input_audio_buffer.append`, `input.transcript`, `response.text`, `conversation.start`, `conversation.end` and `tts_opus_data`. These protocol messages do not establish recognition-only mode, interim/final captions, cancellation or replay guarantees. The [historical interface](../archive/2026-09-26-coaching-architecture.md#59-voiceagent-adapter--voice_adapter) includes reply/output events that are not meeting requirements. Keep the external integration policy while verifying the recognition subset.
 
-No virtual room user or room map mutation here. Protocol upgrades should change this adapter and its fixture tests, not the UI and packet router together.
+<a id="510-ai-publisher--ai_publisher"></a>
 
-### 5.10 AI publisher — `ai_publisher`
+### 5.10 AI publisher — historical compatibility only
 
-Owns the virtual publication, Opus-frame queue, RTP packetization, SSRC/sequence/timestamp state and pacing timer for one voice session. Operations: `openPublication`, `enqueueAudio`, `discardTurn`, `close`.
+AI spoken replies are outside the meeting scope. The [AI publisher proposal](../archive/2026-09-26-coaching-architecture.md#510-ai-publisher--ai_publisher) preserves its virtual publication, queue, RTP, unique stream identifiers, codec validation and pacing design for historical/legacy work; it is not a required meeting module or implementation task.
 
-Uses the ordinary media-router publication port. Gets unique stream identifiers from the SFU allocator; do not hard-code one shared SSRC for all conversations. Validates negotiated codec/clock/channels/frame duration before publication. It does not parse provider messages or choose conversation policy.
+Existing upstream AI output must not be incidentally removed during unrelated extraction. If that path is touched, retain its single frame/timer owner, ordinary publication port, bounded queues and cancellation rules (C-03/C-05 and §8–9); do not infer that a local discard cancels upstream synthesis.
 
 ### 5.11 Optional adapters — cluster and legacy streaming
 
 Cluster discovery/control depends on cancellable room-control ports; relay transport implements packet source/sink ports. Neither can bypass admission or directly change private room maps. Cluster clients own pending request records; room scopes own cancellation handles.
 
-RTMP/HTTP-FLV/WebSocket-FLV remain optional edge adapters outside the initial coaching path. Preserve existing capabilities during extraction; do not redesign or remove them incidentally. Inter-node encryption and authorization are unverified; single-node acceptance does not certify cluster deployment.
+RTMP/HTTP-FLV/WebSocket-FLV remain optional edge adapters outside the initial meeting scope. Preserve existing capabilities during extraction; do not redesign or remove them incidentally. Inter-node encryption and authorization are unverified; single-node acceptance does not certify cluster deployment.
 
 ## 6. Dependency rules and enforcement
 
-1. UI depends on practice-controller public interfaces; controller depends on business/realtime ports; concrete browser/network adapters implement those ports. The composition root wires them.
+1. UI depends on an application boundary; application coordination depends on business/realtime ports; concrete browser/network adapters implement those ports. The composition root wires them. Meeting operation names and product-state ownership remain unresolved in §4/C-01.
 2. Signaling depends on admission and room-control public contracts. Room control depends on session/routing/voice **ports**, not concrete WebSocket, HTTP or provider implementations.
 3. Registry depends on RTC transport. Transport depends on RTP/RTCP, SDP, crypto and network primitives, never room control. Router depends on media value types and endpoint ports, never concrete `WebRtcSession` ownership.
-4. Voice session depends on adapter and publisher ports. Adapter depends on external protocol/network primitives. Publisher depends on media publication and clock/scheduler ports. They must not import each other's implementation headers.
+4. The voice adapter depends on external protocol/network primitives. In the historical coaching split, voice session depends on adapter/publisher ports and publisher on media publication and clock/scheduler ports; preserve that direction when maintaining legacy output, without making a publisher part of meeting recognition. No mutual implementation-header imports.
 5. Reverse runtime notifications use injected typed sinks defined at the consumer boundary. Callback flow is not permission for reverse implementation includes or circular ownership.
 6. Define a DTO once beside its owning public contract. Cross-language wire schemas are language-neutral and versioned; do not create a large `shared` package just to exchange a few fields. Private parser/library types (`json`, `uv_*`, mutable SDP objects) stay behind adapters.
 7. Proposed CMake targets expose only explicit public include directories and declared link dependencies. No recursive global include list for new modules. Add compile-only consumer tests and forbidden-include checks; until these exist, boundary enforcement is a gap.
@@ -240,13 +212,17 @@ RTMP/HTTP-FLV/WebSocket-FLV remain optional edge adapters outside the initial co
 
 ## 7. Contract catalog (all Outline)
 
-The following IDs are stable review anchors in this file. They become Living only with corresponding implementation, boundary tests and confirmed scope. Operation names are semantic proposals, not published C++ ABI or HTTP endpoints.
+The following IDs are stable review anchors in this file. They become Living only with corresponding implementation, boundary tests and confirmed scope. C-01 and C-04 explicitly require meeting adaptation; C-02/C-03/C-05/C-06 retain applicable constraints. Operation names are semantic proposals, not published C++ ABI or HTTP endpoints.
 
-### C-01 Practice lifecycle
+<a id="c-01-practice-lifecycle"></a>
 
-Owner: practice service for product state; controller owns only its local projection. Creation validates theme and caller, returns practice ID and restricted join descriptor. Repeating the same caller/request ID and payload returns the original result within a documented retry window; different payload returns `Conflict`. Ending an already-ended practice succeeds.
+### C-01 Product lifecycle — meeting contract unresolved
 
-A service timeout has an **unknown outcome**, not guaranteed rollback. Query by request ID/session before retrying a create. Product-ended and SFU-drained are separate facts; remote teardown requires a future authenticated control adapter or bounded lease expiry, not direct shared-memory mutation.
+The [practice lifecycle contract](../archive/2026-09-26-coaching-architecture.md#c-01-practice-lifecycle) is historical. Its theme validation, Practice IDs and practice-service ownership are not a meeting contract. Meeting creation/link authority, cap enforcement, reconnect slot ownership and the atomic relationship between admission and the 60-second empty timer remain unresolved; no owner or endpoint is selected here.
+
+Retain the applicable operation constraints: mutating calls need bounded deduplication and explicit conflict behavior; repeated end/cleanup must be idempotent. A remote timeout means an **unknown outcome**, not guaranteed rollback; define a query/reconciliation path before allowing retry of creation. Product-ended and SFU-drained remain separate facts; remote teardown cannot mutate shared memory across processes.
+
+The PRD requires ended links to reject admission without recreating the meeting and captions to be cleared at end. Current SFU inactivity/empty-room timers do not implement those product semantics. Process-restart behavior, link expiry before first join and the caption-state owner still need a decision.
 
 ### C-02 Room commands and snapshots
 
@@ -262,13 +238,15 @@ Owner: allocator/producing transport until transfer. A synchronous packet callba
 
 Each queue specifies maximum bytes, packets and age. Queue overflow returns `Backpressure` or applies an explicit real-time drop policy with a metric; no silent unbounded accumulation. Codec-inappropriate packet dropping is forbidden. Media statistics track gaps; packet delivery is not exactly-once or lossless.
 
-### C-04 Voice events and AI output
+<a id="c-04-voice-events-and-ai-output"></a>
 
-Owner: voice session; adapter owns only protocol translation. Local event envelope: room, participant, publication, generation, opaque conversation ID where supplied, local turn ID, local sequence, kind and monotonic receive time. Only correlate upstream fields actually present. If an event cannot be safely attributed, reject it and mark the bridge failed rather than assigning it to the current speaker by guesswork.
+### C-04 Voice correlation — caption contract unresolved
 
-Ordering is per connection/generation; no total ordering between independent bridges and no replay guarantee. Reconnect cancels the old output generation and does not resend captured audio. Conversation end means upstream turn end, not that queued audio has finished playing; publisher drain is a separate local event. Transcript text lacking a finality flag is not promoted to a final record.
+Retain scoped correlation by room, participant, source publication and connection generation; preserve opaque upstream IDs only where actually supplied. Reject unattributable or stale events instead of guessing the speaker. Local sequences/turn IDs are local metadata, not provider guarantees. The meeting recognition/caption-state owner and event schema remain unresolved.
 
-Current assumed Opus/48 kHz/20 ms behavior needs fixture and interoperability verification; unsupported parameters fail explicitly. Local `discardTurn` invalidates generation and clears local audio. It is **not** proof that upstream synthesis was cancelled. Actual barge-in/provider cancel remains behind the voice bridge gate.
+Ordering is per connection/generation, with no assumed total ordering between bridges or replay guarantee. Reconnect invalidates the old recognition scope and must not resend outage audio. Transcript text without verified finality must not be promoted to a final caption. The PRD requires revisable interim captions, fixed final captions and per-participant isolation; segment identity, ordering and upstream-field mapping remain proposed details to define and verify before implementation.
+
+Verify input codec, clock, channels and frame duration with fixtures and interoperability; unsupported parameters fail explicitly. The [old output contract](../archive/2026-09-26-coaching-architecture.md#c-04-voice-events-and-ai-output), Opus/48 kHz/20 ms hypothesis, turn-end versus playback-drain distinction and `discardTurn` semantics apply to legacy AI output, not meeting captions. Local discard is not proof of upstream cancellation; recognition-only suitability remains behind the voice bridge gate.
 
 ### C-05 Cancellation and close
 
@@ -286,14 +264,16 @@ Product-owned network contracts carry a major version and reject incompatible ma
 
 ## 8. Ownership and lifetime rules
 
+These are proposed ownership constraints, not a description of completed module extraction. WI-003 repairs one existing expiry path without establishing the ownership model below.
+
 - Runtime owns listeners, loop, module instances and crypto/log infrastructure. Listeners are not owned by a room.
 - Room control owns rooms, members and logical publication/subscription records. Other modules retain opaque handles, not owning room pointers.
 - Session registry alone owns transports. Username/address lookups are indexes. A transport owns DTLS/SRTP, track engines and pending network scopes.
 - Media router owns routes only. A route cannot extend transport lifetime or resurrect a closed endpoint.
-- Voice-session collection is owned by room control; each voice session uniquely owns its adapter and AI publisher. AI publisher owns every queued output frame and pacing task.
+- For the historical coaching/legacy output design only: room control owns the voice-session collection; each voice session uniquely owns its adapter and AI publisher, which owns every output frame and pacing task. Meeting recognition and caption-state ownership must be resolved separately (§5.8/C-04), without dual writers.
 - Each network adapter owns its pending request map. The initiating room/voice scope holds cancellable handles, not the request map itself.
 - Each observer registration returns a disposal token owned by the subscriber. The publisher must not invoke a disposed observer.
-- Browser realtime adapter owns device/network resources. Business service owns practice metadata. External VoiceAgent owns model/provider runtime state. No shared writer spans these domains.
+- Browser realtime adapter owns device/network resources. External VoiceAgent owns model/provider runtime state. Historical practice-service metadata ownership does not assign meeting/link state; that owner remains unresolved (C-01). No shared writer spans these domains.
 
 Prefer `unique_ptr` for lifetime ownership. Use `shared_ptr` only for genuinely shared immutable buffers or documented completion state, not as a substitute for a lifetime design. Borrowed references require a shorter synchronous lifetime; asynchronous work uses generation-checked handles or weak cancellation state. Every raw pointer in a public seam must state borrow/transfer semantics.
 
@@ -301,20 +281,20 @@ Prefer `unique_ptr` for lifetime ownership. Use `shared_ptr` only for genuinely 
 
 All room, session-index, route and voice-session mutations stay on their owning libuv loop. Do not block that loop with filesystem/database calls, model work, slow logging or waits. Future worker jobs receive immutable data and post completion with generation checks; workers cannot mutate room maps. Do not add a mutex and claim the subsystem became thread-safe.
 
-Room states: open, draining, closed. Transport states: negotiating, connecting, connected, closing, closed (failure enters closing with a recorded reason). Voice states: starting, active, degraded, stopping, stopped. Stopped instances are not reused; replacement creates a new generation. Invalid transitions produce `InvalidState` or a documented idempotent no-op.
+Proposed SFU states: room open, draining, closed; transport negotiating, connecting, connected, closing, closed (failure enters closing with a recorded reason). These are not the product meeting state machine. The historical coaching voice state list is preserved in the [snapshot](../archive/2026-09-26-coaching-architecture.md#9-concurrency-state-and-shutdown); meeting recognition transitions need C-04 adaptation. Stopped instances are not reused; replacement creates a new generation. Invalid transitions produce `InvalidState` or a documented idempotent no-op.
 
-Normal participant leave: stop its ingress/admission context; invalidate generation; stop voice input/output and remove publication/subscription routes; cancel outstanding room-scoped requests; close its transports; drain callbacks; remove participant metadata. Close the room only when empty and no room-level work remains. Other participants remain unaffected.
+Proposed participant cleanup: stop its ingress/admission context; invalidate generation; cancel its bound voice work and remove its publication/subscription routes; cancel requests in that participant's scope; close its transports; drain callbacks; remove participant metadata. Other participants remain unaffected. An empty SFU room with no pending work is a resource-cleanup condition, not permission to bypass the PRD's 60-second empty-meeting grace period. The coordination with product end, link invalidation and caption clearing is unresolved (C-01).
 
-Process shutdown order:
+Proposed process shutdown order (not established by the recorded SIGTERM tests):
 
 1. Stop accepting new signaling/HTTP work and mark rooms draining.
 2. Stop voice ingress/retries, cancel cluster/control requests and detach route producers.
-3. Clear owned AI queues and cancel pacing/room timers; close sessions and protocol clients.
+3. Clear owned voice queues; for enabled legacy AI output also cancel its pacing. Cancel room timers and close sessions/protocol clients.
 4. Drain pending send/close callbacks while loop, crypto and logs remain alive. Enforce a bounded shutdown deadline and report forced termination.
 5. Close remaining listeners and timer handles; verify no unexpected active handles, then close the loop.
 6. Destroy crypto only after all transport users are gone; flush/join log workers last.
 
-Crash cleanup cannot promise graceful acknowledgements. Without durable practice storage, a restart loses local session state; clients must begin a new generation, not assume a resumed conversation.
+Crash cleanup cannot promise graceful acknowledgements. In-memory session state is lost on restart; clients must not assume a resumed connection. Meeting-link/restart semantics remain unresolved under C-01; this does not authorize persisting captions or introducing practice storage.
 
 ## 10. Security, capacity and privacy
 
@@ -322,33 +302,34 @@ TLS does not provide membership authorization. Validate credentials at SFU ingre
 
 VoiceAgent transport security is an open item: the inspected bridge creates a non-TLS connection. Restrict deployment to an explicitly trusted local/private boundary until TLS or a secured transport is verified. Cluster UDP confidentiality cannot be inferred from browser DTLS/SRTP.
 
-No audio/transcript persistence by default. Transcript UI is an ephemeral projection. Future recording/history requires explicit retention, consent, deletion and access-control requirements plus a storage owner; do not introduce a database as an incidental architecture refactor.
+Required direction: no audio/caption persistence by default; caption UI is an ephemeral projection and meeting end clears captions (PRD REQ-010/011). This is not verified compliance: existing transcript-body logging and provider retention remain gaps. Future recording/history is outside the first release and requires explicit retention, consent, deletion and access-control requirements plus a storage owner; do not introduce a database incidentally.
 
-Use bounded per-room/per-connection capacities: participants, pending requests, SDP/text bytes, voice input age and AI output duration. Proposed startup defaults for a spike: 10 s control deadline, 15 s negotiation deadline, at most 128 outstanding control requests per connection, 64 KiB SDP, 16 KiB text, 500 ms queued voice input, 2 s queued AI output. These are test hypotheses, not measured service guarantees; tune in the capacity gate. On voice queue overflow, fail/cancel the affected turn and surface degradation instead of playing increasingly stale speech.
+Use bounded per-room/per-connection capacities for participants, pending requests, SDP/text bytes and voice input age; bound legacy AI output if enabled. The product requires a hard cap of three participants, recognition failure isolation and no retained outage audio; their enforcement is unimplemented. The [old numeric spike defaults](../archive/2026-09-26-coaching-architecture.md#10-security-capacity-and-privacy) are historical hypotheses, not current settings or meeting service guarantees. WI-003 retained the actual 35-second transport inactivity timeout; it is distinct from negotiation and the product's 60-second empty timer. Define overflow handling and measure caption latency/budget limits before claiming a capacity guarantee.
 
-Log lifecycle changes once at the owning boundary, with correlation and safe error codes. Measure active/pre-STUN sessions, pending callbacks, queue depth/age, dropped frames, turn latency and shutdown duration. Do not log provider tokens, raw SDP, audio or transcript bodies by default. Even identifiers require bounded retention; metrics are not permission to retain conversations.
+Log lifecycle changes once at the owning boundary, with correlation and safe error codes. Measure active/pre-STUN sessions, pending callbacks, queue depth/age, dropped frames, caption latency and shutdown duration. Do not log provider tokens, raw SDP, audio or transcript bodies by default. Even identifiers require bounded retention; metrics are not permission to retain conversations.
 
 ## 11. Migration and executable acceptance
 
-Keep the existing wire protocol and single-node behavior while extracting seams. Do not move the whole tree first. Each implementation slice requires its own confirmed proposal and relevant PRD assessment.
+Preserve the existing wire protocol, source layout and single-node behavior. The [old extraction sequence](../archive/2026-09-26-coaching-architecture.md#11-migration-and-executable-acceptance), including mandatory AI publisher extraction, is historical; it is not the current execution queue. Each future implementation slice needs its own confirmed scope and PRD assessment. Current work and authorization live in [ACTIVE](../../ACTIVE.md).
 
-1. **Baseline:** reproduce a clean in-tree C++17 build and existing test executables; register reliable tests with CTest. Record dependencies and build platform. Use protocol fixtures to capture current behavior. No sibling paths or copied build artifacts.
-2. **Lifecycle first:** introduce primary session ownership, scoped request cancellation, injectable clock and ordered shutdown behind existing entry points. Prove pre-STUN expiry, participant-scoped cleanup, room close with pending callbacks, and no post-close access.
-3. **Control/media split:** isolate JSON/WHIP handling from room commands; move routing out of `Room`. Preserve negotiated media behavior with packet/SDP fixtures and a local WebRTC round trip. Verify deleting a WHIP publication does not remove another participant.
-4. **Voice split:** extract adapter, voice session and AI publisher; test queue cleanup, opaque IDs, interleaved/stale events, disconnect during synthesis, overflow and codec mismatch using a local fake upstream. Real interoperability remains a separate acceptance step.
-5. **Product integration:** after PRD confirmation, implement minimal browser/client ports and decide whether a trusted service is required. Prove admission enforcement before non-local deployment. No automatic TS/Node framework selection.
+- **Existing baseline:** retain WI-002 Debug/direct-test and browser evidence, WI-003 expiry regression and targeted sanitizer evidence, and WI-004 automatic LAN/security/capture checks. CTest registration and the upstream browser production build remain gaps; do not call an empty CTest suite a pass.
+- **Current physical acceptance:** WI-004 still requires two physical browser computers, then three for ten minutes, with original per-endpoint statistics and human audio/video observations. Automatic local browsers do not satisfy that boundary.
+- **Before product integration:** resolve the meeting contracts and owners in C-01/C-04 and the PRD's proposed-details section. Verify the external bridge's recognition-only suitability and three-input isolation before planning a caption adapter or changing integration strategy. No automatic web/server stack selection or AI reply work follows.
+- **When lifecycle/control seams are implemented:** prove single ownership, scoped cancellation, room close with pending callbacks and no post-close access; preserve the existing pre-STUN regression. Protocol/SDP/media fixtures must retain signaling behavior and WHIP publication isolation. Ordered shutdown remains separate from OS process termination.
+- **When recognition integration is implemented:** use a fake external endpoint for interleaved/stale events, interim/final handling, failure isolation, queue overflow and codec mismatch. Verify real decoding and provider behavior in a separate, limited real-service acceptance run. Before billable calls, record the cost model and budget limits required by REQ-012 and obtain applicable execution authorization; verify provider retention before claiming full REQ-011 compliance.
 
-Test each boundary with fakes, not the entire stack: fake clock/scheduler, transport sink, admission verifier and VoiceAgent endpoint. Add ASan/UBSan lifecycle runs; use leak/handle counts and repeated open/close tests. TSan is relevant only for actual worker crossings and does not replace loop-affinity tests. Load tests must compare throughput, CPU, memory and tail latency against the same baseline before accepting performance claims.
+Use boundary fakes where appropriate: clock/scheduler, transport sink, admission verifier and external VoiceAgent endpoint. Broader ownership changes need ASan/UBSan, repeated open/close and leak/handle checks beyond the focused WI-003 test. TSan matters only for actual worker crossings and does not replace loop-affinity tests. Weak-network/capacity work must record conditions and compare equivalent throughput, CPU, memory and latency baselines; existing local media results are not service targets.
 
 ## 12. Governance assessment and unresolved gates
 
-- **Module decomposition — gap:** current `room.hpp` exposes signaling, cluster and voice concerns. Sections 4–5 define target seams, not extracted targets.
-- **Interfaces/contracts — gap:** current callback headers lack the cancellation/correlation guarantees in C-02 through C-05. Contract tests are required before Living status.
-- **Dependency enforcement — gap:** current `CMakeLists.txt` has broad includes. Section 6 requires narrow public headers and compile tests.
-- **Ownership/concurrency — gap:** current static session maps and pending raw callbacks need the lifecycle migration in section 11. Do not claim memory safety from this document.
-- **Source boundary — pass:** ADR 0001 and `third_party/RTCPilot/UPSTREAM.md` establish the intended in-tree source location; build reproducibility remains unverified.
-- **Security/performance — gap:** admission, secure bridge transport and bounded queues require executable validation; section 10 is a target, not an audit certificate.
-- **Persistence — N/A for this slice:** none introduced; a future history feature must reopen the data/retention decision.
-- **UI delivery — N/A for this slice:** no browser behavior implemented; PRD stays Draft.
+| Dimension | Assessment and evidence | Remaining gap |
+|-----------|-------------------------|---------------|
+| Requirements/scope | **pass for documentation alignment:** §1/§4/C-01/C-04 distinguish meeting requirements from [historical coaching](../archive/2026-09-26-coaching-architecture.md) | Product remains unimplemented; PRD Draft |
+| Module decomposition/interfaces | **gap:** §4–5 are Planned/Proposed; C-01–C-06 remain Outline | Meeting/link/caption owners and APIs unresolved; existing `Room` still combines concerns |
+| Dependencies/compatibility | **gap:** §6 and C-06 retain narrow-interface and wire-compatibility constraints; WI-002 gives pinned-client evidence | Broad CMake includes; no compile-only consumer/forbidden-include enforcement; broader peers unverified |
+| Ownership/concurrency/lifecycle | **gap with focused pass:** [WI-003](../reports/2026-09-26-pre-stun-expiry.md) proves repaired pre-STUN expiry and targeted sanitizer paths | Sole transport ownership, pending callbacks, room-wide cleanup and ordered shutdown remain unverified |
+| Source/build/tests | **source boundary pass; build evidence obtained:** ADR 0001, `UPSTREAM.md`, [WI-002](../reports/2026-09-26-meeting-baseline.md) and [WI-004](../reports/2026-09-26-lan-media-baseline.md) | CTest zero registered tests, upstream client 11 TypeScript errors; physical acceptance still pending |
+| Security/capacity/privacy | **gap with bounded fixture evidence:** WI-004 validates normal TLS and serving boundaries | Membership authorization, secure VoiceAgent transport, recognition queues/finality, transcript-body logs, provider retention/cost and weak-network limits |
+| Persistence/UI delivery | **N/A for this documentation change:** no storage or product behavior added | Future meeting/caption work must define owners and validate clearing; no product-delivery claim |
 
-Track `gate-sfu-build`, `gate-sfu-boundaries`, `gate-sfu-lifecycle`, `gate-session-admission`, `gate-media-capacity`, plus existing signaling and voice bridge gates in the [gate register](../reference/architecture-gates.md). No new gate is closed by this documentation change. Conclusion: **document first, then focused spikes, then incremental implementation after maintainer approval**.
+Track `gate-sfu-build`, `gate-sfu-boundaries`, `gate-sfu-lifecycle`, `gate-session-admission`, `gate-media-capacity`, plus signaling and voice bridge gates in the [gate register](../reference/architecture-gates.md). No gate status changes here. Resolve C-01/C-04 against evidence before implementation; the current minimum next step remains WI-004 physical acceptance under its existing conditions.

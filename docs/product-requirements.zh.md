@@ -138,7 +138,9 @@
 
 ## 补充说明
 
-旧陪练架构仍是已有约束的 Proposed 参考，其中单真人与 AI 假设已被已确认会议范围取代。
+[当前架构](architecture/caption-meet-architecture.zh.md)区分适用约束、未决会议设计与
+[历史语音教练方案](archive/2026-09-26-coaching-architecture.zh.md)。
+模块设计与契约仍为 Proposed/Outline；旧单真人与 AI 假设已被已确认会议范围取代。
 基线方案负责取证，再最终确定实现工单及日程估算。
 [已执行的基线](reports/2026-09-26-meeting-baseline.zh.md)已取得 Debug 构建和本机浏览器媒体证据。
 当前缺口包括 CTest 注册、真实设备验收、尚无产品浏览器实现、识别正文日志、

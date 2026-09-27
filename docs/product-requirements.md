@@ -159,8 +159,11 @@ fleet, automatic provider activation, commit or gate closure is implied.
 
 ## Further Notes
 
-The old coaching architecture remains a Proposed reference for existing constraints;
-its single-human/AI assumptions are superseded by the confirmed meeting scope.
+The [current architecture](architecture/caption-meet-architecture.md) separates
+applicable constraints, unresolved meeting design and the
+[historical coaching proposal](archive/2026-09-26-coaching-architecture.md).
+Its module design and contracts remain Proposed/Outline; the old single-human/AI
+assumptions are superseded by the confirmed meeting scope.
 The baseline proposal owns evidence gathering before implementation tickets and
 calendar estimates are finalized. The [executed baseline](reports/2026-09-26-meeting-baseline.md)
 now establishes Debug build and local browser media evidence. Remaining gaps include
