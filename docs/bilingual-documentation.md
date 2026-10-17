@@ -5,7 +5,7 @@ English | [中文](bilingual-documentation.zh.md)
 - Type: Guide
 - Status: Accepted
 - Created: 2026-09-19
-- Updated: 2026-09-21
+- Updated: 2026-10-14
 - Authority: language pairing for the CaptionMeet product repository
 - Related: [`README.md`](README.md), [`scripts/docs-i18n-config.mjs`](../scripts/docs-i18n-config.mjs)
 
@@ -33,6 +33,9 @@ English | [中文](bilingual-documentation.zh.md)
 | `docs/guides/agent/judgment.md` | `docs/guides/agent/judgment.zh.md` |
 | `docs/reference/architecture-gates.md` | `docs/reference/architecture-gates.zh.md` |
 | `docs/architecture/caption-meet-architecture.md` | `docs/architecture/caption-meet-architecture.zh.md` |
+| `apps/web/README.md` | `apps/web/README.zh.md` |
+| `server/README.md` | `server/README.zh.md` |
+| `docs/reports/README.md` | `docs/reports/README.zh.md` |
 
 When you add a new **authoritative** English doc that maintainers expect in both languages, add its path to `REQUIRED_CHINESE_PAIRS` and add the `.zh.md` file in the same change (or mark Chinese `Stale` until synced).
 
@@ -40,7 +43,7 @@ When you add a new **authoritative** English doc that maintainers expect in both
 
 ## Excluded from doc scans
 
-`IGNORE_DIR_NAMES` in `docs-i18n-config.mjs` includes `third_party`. Do not add `third_party/RTCPilot/**` to required pairs; keep RTCPilot attribution in `LICENSE` / `UPSTREAM.md` instead.
+`IGNORE_DIR_NAMES` in `docs-i18n-config.mjs` excludes `.git`, `.agents`, `node_modules`, `third_party` and `build`. The Git-ignored `.agents` directory contains local skill material rather than repository product documentation. Do not add `third_party/RTCPilot/**` to required pairs; keep RTCPilot attribution in `LICENSE` / `UPSTREAM.md` instead.
 
 ## Translation lifecycle (Chinese `*.zh.md`)
 

@@ -2,11 +2,13 @@
 
 English | [中文](2026-09-26-physical-media-handoff.zh.md)
 
+> **Historical C++ evidence (2026-10-14):** Results belong to the removed RTCPilot implementation; original measurements, failures and unverified items are preserved. States, authorization and reproduction commands describe that session, not Rust acceptance or current execution authorization. See [ACTIVE](../../ACTIVE.md) for current work and the [report index](README.md) for evidence limits.
+
 - Type: Execution report
 - Status: Independent preflight executed; physical-device acceptance unverified
 - Date: 2026-09-26
 - Authority: Observed execution evidence, not product acceptance or gate closure
-- Related: [ACTIVE](../../ACTIVE.md), [previous WI-004](2026-09-26-lan-media-baseline.md), [LAN commands](../../scripts/baseline/LAN.md), [WI-003](2026-09-26-pre-stun-expiry.md), [WI-002](2026-09-26-meeting-baseline.md)
+- Related: [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md), [previous WI-004](2026-09-26-lan-media-baseline.md), [LAN commands](../../scripts/baseline/LAN.md), [WI-003](2026-09-26-pre-stun-expiry.md), [WI-002](2026-09-26-meeting-baseline.md)
 
 ## Outcome and Authorization
 

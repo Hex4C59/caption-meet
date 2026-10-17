@@ -4,26 +4,31 @@ English | [中文](README.zh.md)
 
 - Type: Reference
 - Status: Accepted
-- Created: <!-- date -->
-- Authority: navigation for this product repository
+- Updated: 2026-10-14
+- Authority: navigation for the current product and its historical records
 
-## Entry points, not a full-reading checklist
+## Current project
 
-- Product introduction: [root README](../README.md).
-- Agent baseline and task triggers: [AGENTS progressive loading](../AGENTS.md#progressive-loading); preserve kernel requirements and the full collaboration-guide read before application-code proposals/edits.
-- Current work: [ACTIVE](../ACTIVE.md). Mentioning only ACTIVE is sufficient for the maintainer, not permission for the agent to skip required context.
-- Architecture tasks: [task reading guide](architecture/caption-meet-architecture.md#task-reading-guide). It is the single detailed task-to-section map, separating applicable constraints from unresolved meeting design; do not duplicate module contracts here.
-- User-visible scope: [PRD](product-requirements.md), Draft until explicitly approved; assess PRD impact before each WI enters Build.
-- Decisions and validation: [gates](reference/architecture-gates.md), then only relevant linked [ADRs](decisions/README.md).
-- Translation maintenance: [bilingual policy](bilingual-documentation.md), affected English/Chinese pair and configuration. Agents normally read the English authority, not both entire versions.
-- [Discussions](discussions/) and the [archive index](archive/README.md) are optional historical context, not routine startup input. The archive links earlier ACTIVE records and the superseded coaching proposal; current work and effective authorization remain in ACTIVE.
+| Question | Start here |
+|----------|------------|
+| What is the product and what exists? | [Root README](../README.md) |
+| What work is authorized now? | [ACTIVE](../ACTIVE.md) |
+| What must the meeting do? | [Draft PRD](product-requirements.md), [domain vocabulary](../CONTEXT.md) |
+| What does the Rust transition decide? | [ADR 0002](decisions/0002-rust-source-transition.md) |
+| Which architecture constraints and questions apply? | [Current Rust outline and task routes](architecture/caption-meet-architecture.md#task-reading-guide) |
+| What remains unverified? | [Architecture gates](reference/architecture-gates.md) |
+| How do agents work in this repository? | [AGENTS](../AGENTS.md), then the full [collaboration guide](guides/agent-collaboration.md) before application-code proposals or edits |
 
-Scan the governance dimension index/headings for architecture work, then read applicable details as specified in the architecture reading guide. Expand across affected ownership, contract, security and failure boundaries; stop after consumers and tests are covered. This is manual agent routing, not automatic loading or a check performed by `docs:verify`.
+These are reading routes, not implementation evidence. Rust frameworks, media libraries and contracts remain unresolved. The kernel/AGENTS baseline still applies; mentioning ACTIVE does not waive it. Architecture work also requires the [governance index](guides/architecture-governance.md#index-dimensions-at-a-glance) and affected dimensions.
 
-## Agent: commits only
+## Historical material
 
-Read [`git-commit-convention.md`](git-commit-convention.md) when creating, editing, or reviewing commit messages—not for ordinary coding sessions.
+The [archive index](archive/README.md) contains the superseded C++ architecture, baseline plan and detailed previous session state. The [report index](reports/README.md) records what the removed implementation passed, failed or left unverified. [Discussions](discussions/) preserve earlier product decisions and exploration.
 
-## Documentation checks
+Use these when a specific historical question requires them. They do not select Rust interfaces, restore old execution authorization or prove current runtime behavior. Old fixture commands require the corresponding historical source/artifacts and are not current setup instructions.
 
-Run `npm run docs:verify` after substantive doc changes.
+## Documentation and commits
+
+Maintain affected English/Chinese pairs under the [bilingual policy](bilingual-documentation.md). Run `npm run docs:verify` after substantive edits and `npm run check:deps` for the source/attribution check. Neither command establishes product acceptance.
+
+Read the [commit convention](git-commit-convention.md) when creating, editing or reviewing commits. Reading it does not authorize a commit.

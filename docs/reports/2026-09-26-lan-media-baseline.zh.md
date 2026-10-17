@@ -2,6 +2,8 @@
 
 [English](2026-09-26-lan-media-baseline.md) | 中文
 
+> **历史 C++ 证据（2026-10-14）：** 本文结果属于已删除的 RTCPilot 实现，测量、失败和未验证项按原记录保留。文中的状态、授权和复现命令属于当时语境，不代表 Rust 验收或当前执行授权。当前工作见 [ACTIVE](../../ACTIVE.md)，证据边界见[报告索引](README.zh.md)。
+
 - 翻译状态: Machine Draft
 - 权威原文: [2026-09-26-lan-media-baseline.md](2026-09-26-lan-media-baseline.md)
 - 原文版本: Uncommitted baseline
@@ -10,7 +12,7 @@
 - 状态: 自动化基线已执行；实体设备验收待完成
 - 日期: 2026-09-26
 - 权威范围: 测试夹具的实际观测证据，不代表产品验收或关卡关闭
-- 相关文档: [WI-002](2026-09-26-meeting-baseline.zh.md)、[WI-003](2026-09-26-pre-stun-expiry.zh.md)、[命令](../../scripts/baseline/LAN.md)、[ACTIVE](../../ACTIVE.md)
+- 相关文档: [WI-002](2026-09-26-meeting-baseline.zh.md)、[WI-003](2026-09-26-pre-stun-expiry.zh.md)、[命令](../../scripts/baseline/LAN.md)、[ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md)
 
 ## 结果与授权
 

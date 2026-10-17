@@ -2,6 +2,8 @@
 
 [English](2026-09-26-meeting-scope.md) | 中文
 
+> **历史讨论（2026-10-14）：** 保留当时的产品范围确认与技术探索。C++/RTCPilot 技术方向已由 [ADR 0002](../decisions/0002-rust-source-transition.zh.md)替代；当前产品要求见 [PRD](../product-requirements.zh.md)。
+
 - 翻译状态：Machine Draft
 - 权威原文：[2026-09-26-meeting-scope.md](2026-09-26-meeting-scope.md)
 - 原文版本：Uncommitted baseline
@@ -73,5 +75,5 @@
 ## 下一检查点
 
 维护者已于 2026-09-26 回复“准确了”确认此范围。后续见[产品规格](../product-requirements.zh.md)
-和[基线方案](../plans/meeting-baseline-spike.zh.md)。本文件保留范围确认记录，规格后续维护在 PRD。
+和[基线方案](../archive/2026-10-14-cpp-meeting-baseline-spike.zh.md)。本文件保留范围确认记录，规格后续维护在 PRD。
 运行时问题仍需可执行证据，才能最终确定实现任务和估时；此处不批准 ADR，也不关闭已有 gate。

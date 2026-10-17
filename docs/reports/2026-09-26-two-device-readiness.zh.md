@@ -2,6 +2,8 @@
 
 [English](2026-09-26-two-device-readiness.md) | 中文
 
+> **历史 C++ 证据（2026-10-14）：** 本文结果属于已删除的 RTCPilot 实现，测量、失败和未验证项按原记录保留。文中的状态、授权和复现命令属于当时语境，不代表 Rust 验收或当前执行授权。当前工作见 [ACTIVE](../../ACTIVE.md)，证据边界见[报告索引](README.zh.md)。
+
 - 类型：执行报告
 - 状态：只读就绪复核已执行；实体媒体验收未验证
 - 日期：2026-09-26，本轮始于 17:36 UTC
@@ -10,7 +12,7 @@
 - 原文版本：Uncommitted baseline
 - 最近同步：2026-09-26
 - 权威性：当前就绪证据，不代表媒体验收或门禁关闭
-- 相关：[ACTIVE](../../ACTIVE.md)、[上轮执行](2026-09-26-physical-media-handoff.md)、[LAN 步骤](../../scripts/baseline/LAN.md)
+- 相关：[ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md)、[上轮执行](2026-09-26-physical-media-handoff.md)、[LAN 步骤](../../scripts/baseline/LAN.md)
 
 ## 授权与设备条件
 

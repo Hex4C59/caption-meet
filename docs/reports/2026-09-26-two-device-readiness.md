@@ -2,11 +2,13 @@
 
 English | [中文](2026-09-26-two-device-readiness.zh.md)
 
+> **Historical C++ evidence (2026-10-14):** Results belong to the removed RTCPilot implementation; original measurements, failures and unverified items are preserved. States, authorization and reproduction commands describe that session, not Rust acceptance or current execution authorization. See [ACTIVE](../../ACTIVE.md) for current work and the [report index](README.md) for evidence limits.
+
 - Type: Execution report
 - Status: Read-only readiness recheck executed; physical acceptance unverified
 - Date: 2026-09-26, session opened 17:36 UTC
 - Authority: Current readiness evidence, not media acceptance or gate closure
-- Related: [ACTIVE](../../ACTIVE.md), [previous execution](2026-09-26-physical-media-handoff.md), [LAN procedure](../../scripts/baseline/LAN.md)
+- Related: [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md), [previous execution](2026-09-26-physical-media-handoff.md), [LAN procedure](../../scripts/baseline/LAN.md)
 
 ## Authorization and Device Conditions
 

@@ -1,5 +1,7 @@
 # Trusted LAN Media Fixture (WI-004)
 
+> **Historical procedure (2026-10-14):** This guide targets the removed C++ RTCPilot implementation. Its commands require the corresponding historical source and build artifacts and are not current checkout setup instructions. The legacy JavaScript fixture is not a Rust application. See the [archive](../../docs/archive/README.md), [report index](../../docs/reports/README.md) and [current architecture](../../docs/architecture/caption-meet-architecture.md).
+
 This uses the same pinned browser helpers and RTCPilot as [README](README.md).
 It is a trusted-LAN development fixture, without product admission controls.
 HTTPS/WSS does not authenticate meeting membership. Physical-computer acceptance

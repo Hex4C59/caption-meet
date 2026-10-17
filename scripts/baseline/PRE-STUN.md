@@ -1,5 +1,7 @@
 # Pre-STUN Lifetime Regression (WI-003)
 
+> **Historical procedure (2026-10-14):** This guide targets the removed C++ RTCPilot implementation. Its commands require the corresponding historical source and build artifacts and are not current checkout setup instructions. The legacy JavaScript fixture is not a Rust application. See the [archive](../../docs/archive/README.md), [report index](../../docs/reports/README.md) and [current architecture](../../docs/architecture/caption-meet-architecture.md).
+
 This fixture exercises the existing SFU, not a meeting product. Prerequisites are
 the pinned client/Playwright setup in [README](README.md), Node 22, Chrome, GDB 15
 with Python, and a GCC/libstdc++ Debug build. Keep ports 18080 and 18000 free;

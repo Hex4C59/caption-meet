@@ -5,21 +5,23 @@ English | [中文](product-requirements.zh.md)
 - Type: Product requirements
 - Status: Draft - product scope confirmed; technical defaults and acceptance details proposed
 - Created: 2026-09-21
-- Updated: 2026-09-26
+- Updated: 2026-10-14
 - Authority: User-visible specification when Accepted; no shipped behavior is implied
-- Related: [ACTIVE](../ACTIVE.md), [Glossary](../CONTEXT.md), [Confirmed scope](discussions/2026-09-26-meeting-scope.md), [Baseline proposal](plans/meeting-baseline-spike.md), [Architecture](architecture/caption-meet-architecture.md)
+- Related: [ACTIVE](../ACTIVE.md), [Glossary](../CONTEXT.md), [Confirmed scope](discussions/2026-09-26-meeting-scope.md), [Architecture](architecture/caption-meet-architecture.md)
 
 The maintainer confirmed the complete scope on 2026-09-26 with "准确了" and authorized
 specification preparation and the first technical-validation proposal. This replaces
 the old single-person AI coaching MVP. Individual scope choices are confirmed;
 new implementation hypotheses below remain proposed. No meeting product is shipped.
 
+On 2026-10-14, the maintainer chose all-Rust maintained code and authorized C/C++ removal as the first step; see [ADR 0002](decisions/0002-rust-source-transition.md). Product scope is unchanged. Rust implementation design and acceptance remain unverified. Historical C++ plans and evidence are indexed separately in the [archive](archive/README.md) and [reports](reports/README.md).
+
 ## Problem Statement
 
 People in a small Chinese-speaking group need a browser meeting where they can
 see and hear each other and follow captions labeled by participant. Caption
 service failures must not interrupt their conversation. The maintainer also needs
-a demonstrable project showing C++ RTC server engineering, with reproducible
+a demonstrable project showing Rust RTC server engineering, with reproducible
 evidence of protocol work, weak-network behavior and stable resource lifecycles.
 
 ## Solution
@@ -79,94 +81,54 @@ confirmed; low-level protocol, recovery and measurement details still need valid
 | REQ-012 | CNY 30/month recognition test budget. | Provider cost model and conservative usage limits are recorded before billable calls; depleted budget disables recognition without stopping calls. |
 | REQ-013 | Reproducible engineering evidence. | Multi-browser development checks and a three-computer acceptance run record versions, conditions, behavior and resource/latency measurements. |
 
-## Traceability to Active Work
+## Traceability and implementation status
 
-| WI ID | PRD section(s) | Acceptance |
-|-------|----------------|------------|
-| WI-001 | *(none - prior technical baseline, not closed)* | Preserve previous results and unresolved documentation/bridge gates in ACTIVE. |
-| WI-002 | REQ-002, REQ-004, REQ-013 (feasibility only) | Clean build/test evidence and browser audio/video interoperability per the baseline proposal; no MVP delivery claim. |
-| WI-003 | REQ-013 (technical-only) | Reproduce and repair pre-STUN session expiry; prove index, object and timer reclamation while preserving browser media. No product feature or gate closure. |
-| WI-004 | REQ-002, REQ-004, REQ-013 (technical-only) | Trusted LAN HTTPS/WSS fixture and real-device capture path; separate automatic media evidence from two/three-physical-computer acceptance. No product or gate completion claim. |
+No meeting product or Rust runtime is delivered. Previous work is historical:
 
-The remaining requirements are specification scope for subsequent work items,
-not a second active build. The local work tracker is ACTIVE plus these requirement
-IDs; no external issue has been published.
+| WI ID | PRD section(s) | Evidence and limits |
+|-------|----------------|---------------------|
+| WI-001 | *(prior technical baseline)* | Superseded; unresolved documentation/bridge evidence remains in the archive. |
+| WI-002 | REQ-002, REQ-004, REQ-013 | C++ build/tests and local browser feasibility only; see the [archived plan](archive/2026-10-14-cpp-meeting-baseline-spike.md). |
+| WI-003 | REQ-013 | Focused C++ expiry repair and regression evidence; no product or Rust acceptance. |
+| WI-004 | REQ-002, REQ-004, REQ-013 | Automatic trusted-LAN fixture evidence; superseded without physical-device acceptance. |
+| WI-005 | *(technical-only)* | Removed C/C++ source and native artifacts; no Rust implementation. |
+| WI-006 | *(technical-only)* | Documentation cleanup under ADR 0002; no user-visible behavior or runtime acceptance. |
 
-## Implementation Decisions
+[ACTIVE](../ACTIVE.md) owns current work and approval. Future implementation must map its user-visible scope to the relevant REQ IDs before Build.
 
-- Keep the in-tree RTCPilot SFU and its upstream attribution. Browser media uses
-  the SFU; existing signaling compatibility must be verified before changing it.
-- Keep VoiceAgent external under the existing integration policy. Determine whether
-  its bridge supports recognition-only operation and three independent inputs.
-  A different integration strategy requires a concrete decision, not an incidental rewrite.
-- Guest display names are presentation labels, not authorization or unique identities.
-  Meeting/participant identity and capacity must be validated by the trusted service.
-- Recognition is subordinate to the call: finite queues and cancellation must prevent
-  a slow recognizer from blocking media forwarding or retaining outage audio.
-- Provider keys remain server-side. Existing lifecycle and single-event-loop
-  constraints apply; no new browser/server framework or module extraction is selected.
-- Meeting end is a product state, distinct from timer-driven transport cleanup.
-  Old callbacks must neither revive an ended meeting nor mutate a replacement session.
+## Implementation decisions
 
-### Proposed Details for the Baseline to Resolve
+- Use Rust for maintained application code, including browser UI, backend and SFU, under [ADR 0002](decisions/0002-rust-source-transition.md). The old RTCPilot implementation and libuv/CMake choices are retired; retain attribution and historical evidence.
+- Browser media uses WebRTC through an SFU. The Rust media library, signaling contract, process layout and framework remain unselected.
+- Keep the speech runtime external. Verify recognition-only operation, independent inputs, retention, cost and replacement integration before implementation claims or billable calls.
+- Guest display names are presentation labels, not authorization or unique identities. A trusted owner validates meeting/participant identity, admission and capacity.
+- Recognition is subordinate to the call. Bounded queues and cancellation prevent a slow recognizer from blocking media forwarding or retaining outage audio; provider credentials stay server-side.
+- Meeting end is a product state, distinct from transport cleanup. Old events cannot revive an ended meeting or mutate a replacement connection.
 
-These are not additional maintainer decisions or existing capabilities:
+### Details to resolve before implementation
 
-- Caption events need participant/connection identity, segment identity, revision/finality
-  and a documented ordering rule. Verify upstream fields rather than inventing guarantees.
-- Define disconnect detection, reconnect slot ownership, same-name display, link
-  expiration before first join and after process restart, and the empty-timer race
-  at admission. Preserve the confirmed cap and 60-second empty-meeting semantics.
-- Verify audio input format, session limits, provider retention, pricing and a practical
-  budget stop policy; local accounting alone does not guarantee the provider bill.
-- Define first-caption/final-caption latency separately and measure media/resource
-  baselines before setting numeric service targets.
-- The proposed user-facing acceptance in the requirements table will be refined only
-  where experiments expose a concrete ambiguity, then reflected in the same document.
+These are design questions, not additional product decisions or existing capabilities:
 
-## Testing Decisions
+- Define caption participant/connection identity, segment identity, revisions, finality and ordering from the actual upstream contract.
+- Define disconnect detection, reconnect slot ownership, same-name display, link expiration before first join and after restart, and the admission/empty-timer race. Preserve the confirmed cap and 60-second empty-meeting semantics.
+- Verify audio format, session limits, provider retention/pricing and a practical budget stop policy; local accounting alone cannot guarantee the provider bill.
+- Measure media/resource baselines and distinguish first-caption from final-caption latency before setting numerical service targets.
+- Refine proposed acceptance details only where investigation exposes a concrete ambiguity, then update this document and its translation together.
 
-The primary acceptance boundary is the browser's meeting flow through real signaling
-and WebRTC to the SFU. This matches the confirmed multi-browser development and
-three-computer acceptance approach; tests observe visible behavior and media,
-not private containers or incidental class structure.
+## Testing decisions
 
-Use the existing external recognition connection as the second controlled boundary:
-a fake service emits interim/final, interleaved, delayed and failed responses.
-It does not synthesize evidence of real audio decoding or actual provider quality.
-A limited real-service integration run separately verifies those properties.
+Verify the browser meeting flow through real signaling and WebRTC to the Rust SFU. Tests observe user-visible behavior and media through the same interfaces as callers. Keep local multi-browser development results separate from the PRD's three-computer acceptance.
 
-Test admission, participant/room lifecycle, caption projection and recognition failure
-through these boundaries. Use a controllable clock or equivalent deterministic
-driver for expiration races; tests should not sleep for a minute to prove a timer.
+Use a fake external recognition endpoint to emit interim/final, interleaved, delayed, stale and failed events. A separate limited real-service run must verify actual decoding and provider behavior. Verify admission, meeting/participant lifecycle, caption projection, cancellation and failure isolation; use a controllable clock or equivalent deterministic driver for expiry races.
 
-Existing tests exercise TCC packet handling, timers and the protoo connection.
-They provide useful fixtures but not meeting acceptance. They rely on assertions,
-so run them in Debug; direct execution is required until CTest registration exists.
-Current root tests validate documentation, not audio/video.
+The removed C++ tests and historical reports are reference evidence only. Current root tests validate documentation rules. Rust build, unit/interface tests and runtime verification still need to be established. Record recognition-fake, real-provider, synthetic-browser and physical-device results separately. Weak-network measurements must record the injected loss/delay profile and compare equivalent conditions.
 
-Record the distinction between passing an ASR fake, passing a real provider,
-multi-browser results and three-device results. For weak-network work, record the
-injected loss/delay profile and compare equivalent before/after runs. No numerical
-performance result has been produced in this specification session.
+## Out of scope
 
-## Out of Scope
+Accounts, host controls, recording/replay, saved minutes, translation, AI spoken replies, screen sharing, more than three participants, public-internet/mobile acceptance and an embedded speech runtime remain outside the first release.
 
-Accounts, host controls, recording/replay, saved minutes, translation, AI spoken
-replies, screen sharing, more than three participants, public-internet/mobile
-acceptance, a new SFU or an embedded VoiceAgent runtime. No mass refactor, service
-fleet, automatic provider activation, commit or gate closure is implied.
+A Rust SFU is part of the confirmed technical direction. Library selection and implementation scope require their own reviewable work item; this documentation cleanup does not start implementation or close runtime gates.
 
-## Further Notes
+## Further notes
 
-The [current architecture](architecture/caption-meet-architecture.md) separates
-applicable constraints, unresolved meeting design and the
-[historical coaching proposal](archive/2026-09-26-coaching-architecture.md).
-Its module design and contracts remain Proposed/Outline; the old single-human/AI
-assumptions are superseded by the confirmed meeting scope.
-The baseline proposal owns evidence gathering before implementation tickets and
-calendar estimates are finalized. The [executed baseline](reports/2026-09-26-meeting-baseline.md)
-now establishes Debug build and local browser media evidence. Remaining gaps include
-CTest registration, physical-device acceptance, absent product UI, ASR transcript-body logs, and unverified
-three-stream recognition. Keep the named gates open until their actual closure criteria
-are met. The previous scope summary remains the approval record, not a second PRD.
+The [current architecture](architecture/caption-meet-architecture.md) records Rust constraints and unresolved contracts. The [archive](archive/README.md) retains earlier C++/coaching designs and authorization; the [report index](reports/README.md) distinguishes executed C++ results from missing acceptance. Those records do not supply Rust build/media evidence. The PRD remains Draft and the [runtime gates](reference/architecture-gates.md) remain open.

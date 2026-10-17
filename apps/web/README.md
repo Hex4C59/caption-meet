@@ -1,5 +1,7 @@
-# Web 客户端（占位）
+# Browser application (planned)
 
-CaptionMeet 的浏览器端会议 UI 将放在此目录。
+English | [中文](README.zh.md)
 
-计划能力：入会前预览、加入会议、摄像头与麦克风控制、多人音视频、逐人中文实时字幕。信令与媒体对接 RTCPilot（protoo / WebSocket）及现有 WebRTC 流程；具体范围见[产品规格](../../docs/product-requirements.zh.md)。
+This directory is a placeholder for the Rust browser application: device preview/capture, explicit joining/leaving, participant audio/video and ephemeral Chinese captions. Media will use browser WebRTC through a Rust SFU. The framework, browser adapter and signaling/caption contracts are unselected; no application or Rust media interoperability is implemented here.
+
+Follow the [Draft PRD](../../docs/product-requirements.md), [current architecture](../../docs/architecture/caption-meet-architecture.md) and [ADR 0002](../../docs/decisions/0002-rust-source-transition.md). Provider keys stay outside browser bundles/storage. Implementation needs a scoped work item in [ACTIVE](../../ACTIVE.md).

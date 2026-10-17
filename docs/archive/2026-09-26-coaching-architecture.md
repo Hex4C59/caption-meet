@@ -6,7 +6,7 @@ English | [中文](2026-09-26-coaching-architecture.zh.md)
 - Status: Superseded — historical context only
 - Archived: 2026-09-26
 - Original status: Proposed; all contracts Outline
-- Authority: no current implementation authority; consult the [current architecture](../architecture/caption-meet-architecture.md), [PRD](../product-requirements.md) and [ACTIVE](../../ACTIVE.md) for applicability
+- Authority: no current implementation authority; consult the [current architecture](2026-10-14-cpp-meeting-architecture.md), [PRD](../product-requirements.md) and [ACTIVE](../../ACTIVE.md) for applicability
 
 > **Reason for archiving:** The maintainer confirmed three-person LAN audio/video meetings with per-participant Chinese captions on 2026-09-26, replacing the single-human coaching, theme-based practice and mandatory AI spoken-reply assumptions. The complete pre-cleanup design body follows, including its diagram, Practice APIs, AI publisher and historical migration sequence, to preserve design history; it does not authorize those flows.
 >

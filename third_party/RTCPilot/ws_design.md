@@ -1,4 +1,6 @@
 # websocket protoo message
+> **CaptionMeet historical reference (2026-10-14):** The C++ RTCPilot implementation described here was removed under [ADR 0002](../../docs/decisions/0002-rust-source-transition.md). Configuration, protocols and product-direction text below are upstream/legacy references, not selected Rust behavior or current startup instructions.
+
 ## join message
 client ---> server
 

@@ -1,5 +1,7 @@
 # Meeting Direction Interview
 
+> **Historical discussion (2026-10-14):** This preserves the original product-scope confirmation and technical exploration. [ADR 0002](../decisions/0002-rust-source-transition.md) superseded the C++/RTCPilot direction; the [current PRD](../product-requirements.md) owns product requirements.
+
 - Type: Discussion
 - Status: Scope confirmed on 2026-09-26; carried into the product specification
 - Created: 2026-09-26

@@ -2,12 +2,14 @@
 
 [English](2026-09-26-pre-stun-expiry.md) | 中文
 
+> **历史 C++ 证据（2026-10-14）：** 本文结果属于已删除的 RTCPilot 实现，测量、失败和未验证项按原记录保留。文中的状态、授权和复现命令属于当时语境，不代表 Rust 验收或当前执行授权。当前工作见 [ACTIVE](../../ACTIVE.md)，证据边界见[报告索引](README.zh.md)。
+
 - 翻译状态：Machine Draft
 - 权威原文：[2026-09-26-pre-stun-expiry.md](2026-09-26-pre-stun-expiry.md)
 - 原文版本：Uncommitted baseline
 - 最近同步：2026-09-26
 - 类型：执行报告，不是产品验收。
-- 授权：本轮诊断、回归、最小 C++ 修复与必要夹具调整，已记录在 [ACTIVE](../../ACTIVE.md)。
+- 授权：本轮诊断、回归、最小 C++ 修复与必要夹具调整，已记录在 [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md)。
 - 起始 HEAD：`eb9e05b7973d5b703687d95cae50e9da7c7b2b5e`；保留已有改动，未提交、未推送。
 - [WI-002 报告](2026-09-26-meeting-baseline.zh.md)及其 25 个构造、22 个析构的审计保持不变。原先日志数量差异本身不能证明内存泄漏。
 - 范围：现有单事件循环 SFU 的活动超时回收。不开发会议产品、字幕或 ASR，不开通付费 API，不更改集成策略，不扩展到完整优雅停机，不关闭 gate。

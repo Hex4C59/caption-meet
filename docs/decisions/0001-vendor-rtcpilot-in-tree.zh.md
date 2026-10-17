@@ -2,6 +2,8 @@
 
 [English](0001-vendor-rtcpilot-in-tree.md) | 中文
 
+> **源码决策已被替代（2026-10-14）：** [ADR 0002](0002-rust-source-transition.zh.md)将仓内 C++ 源码维护改为 Rust 方向。本文保留原决策记录，署名要求继续有效。
+
 - 翻译状态：Human Reviewed
 - 权威原文：[0001-vendor-rtcpilot-in-tree.md](0001-vendor-rtcpilot-in-tree.md)
 - 原文版本：Uncommitted baseline

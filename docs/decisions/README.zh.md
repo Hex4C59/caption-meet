@@ -5,7 +5,7 @@
 - 翻译状态：Machine Draft
 - 权威原文：[README.md](README.md)
 - 原文版本：Uncommitted baseline
-- 最近同步：<!-- date -->
+- 最近同步：2026-10-14
 
 - 类型：参考
 - 状态：Accepted
@@ -31,4 +31,5 @@
 
 | ID | 标题 | Gate | 文件 |
 |----|------|------|------|
-| 0001 | 仓内 vendor RTCPilot | `gate-repo-layout` | [0001-vendor-rtcpilot-in-tree.zh.md](0001-vendor-rtcpilot-in-tree.zh.md) |
+| 0001 | 仓内 vendor RTCPilot（历史；源码维护决策由 0002 替代） | `gate-repo-layout` | [0001-vendor-rtcpilot-in-tree.zh.md](0001-vendor-rtcpilot-in-tree.zh.md) |
+| 0002 | Rust 转向及 C/C++ 源码删除 | `gate-repo-layout` | [0002-rust-source-transition.zh.md](0002-rust-source-transition.zh.md) |

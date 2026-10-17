@@ -2,6 +2,8 @@
 
 English | [中文](2026-09-26-meeting-scope.zh.md)
 
+> **Historical discussion (2026-10-14):** This preserves the original product-scope confirmation and technical exploration. [ADR 0002](../decisions/0002-rust-source-transition.md) superseded the C++/RTCPilot direction; the [current PRD](../product-requirements.md) owns product requirements.
+
 - Type: Discussion
 - Status: Scope confirmed on 2026-09-26; engineering proposals remain unverified
 - Created: 2026-09-26
@@ -91,7 +93,7 @@ diagnoses and before/after measurements separately from upstream capabilities.
 ## Next checkpoint
 
 The maintainer confirmed this scope with "准确了" on 2026-09-26. See the resulting
-[specification](../product-requirements.md) and [baseline proposal](../plans/meeting-baseline-spike.md).
+[specification](../product-requirements.md) and [baseline proposal](../archive/2026-10-14-cpp-meeting-baseline-spike.md).
 This file preserves the scope approval record; the PRD owns ongoing specification.
 Runtime questions still require executable evidence before implementation tasks and
 estimates are finalized. No ADR is Accepted and no existing gate is closed here.

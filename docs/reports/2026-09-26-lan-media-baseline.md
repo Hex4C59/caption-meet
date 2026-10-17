@@ -2,11 +2,13 @@
 
 English | [中文](2026-09-26-lan-media-baseline.zh.md)
 
+> **Historical C++ evidence (2026-10-14):** Results belong to the removed RTCPilot implementation; original measurements, failures and unverified items are preserved. States, authorization and reproduction commands describe that session, not Rust acceptance or current execution authorization. See [ACTIVE](../../ACTIVE.md) for current work and the [report index](README.md) for evidence limits.
+
 - Type: Execution report
 - Status: Automated baseline executed; physical-device acceptance pending
 - Date: 2026-09-26
 - Authority: Observed fixture evidence, not product acceptance or gate closure
-- Related: [WI-002](2026-09-26-meeting-baseline.md), [WI-003](2026-09-26-pre-stun-expiry.md), [commands](../../scripts/baseline/LAN.md), [ACTIVE](../../ACTIVE.md)
+- Related: [WI-002](2026-09-26-meeting-baseline.md), [WI-003](2026-09-26-pre-stun-expiry.md), [commands](../../scripts/baseline/LAN.md), [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md)
 
 ## Outcome and Authorization
 

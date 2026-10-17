@@ -5,30 +5,34 @@
 - 翻译状态：Machine Draft
 - 权威原文：[README.md](README.md)
 - 原文版本：Uncommitted baseline
-- 最近同步：2026-09-26
-
+- 最近同步：2026-10-14
 - 类型：参考
 - 状态：Accepted
-- 创建：<!-- date -->
-- 权威：本产品仓库文档导航
+- 更新：2026-10-14
+- 权威：当前产品与历史记录的导航
 
-## 阅读入口，不是全文必读清单
+## 当前项目
 
-- 产品介绍：[根 README](../README.zh.md)。
-- Agent 基础要求与任务触发：[AGENTS 渐进加载](../AGENTS.md#progressive-loading)；保留内核要求，提出/修改应用代码前仍须全文读取协作指南。
-- 当前工作：[ACTIVE](../ACTIVE.md)。维护者只 @ ACTIVE 即可，不等于 Agent 可以跳过必要上下文。
-- 架构任务：[按任务阅读导航](architecture/caption-meet-architecture.zh.md#task-reading-guide)。它是唯一详细任务到章节路由，区分适用约束与未决会议设计；不在此重复模块契约。
-- 用户可见范围：[PRD](product-requirements.zh.md)，明确批准前为 Draft；每个 WI 进入 Build 前判断 PRD 影响。
-- 决策与验证：[gate](reference/architecture-gates.zh.md)，再读相关关联 [ADR](decisions/README.zh.md)。
-- 翻译维护：[双语规则](bilingual-documentation.zh.md)、受影响中英文对及配置。Agent 默认读英文权威正文，不默认全文读两种语言。
-- [讨论](discussions/)和[归档索引](archive/README.zh.md)是可选历史上下文，不是例行启动输入。归档收录早期 ACTIVE 记录和已替代的语音教练方案；当前工作与有效授权仍由 ACTIVE 维护。
+| 问题 | 阅读入口 |
+|------|----------|
+| 产品是什么，已经有什么？ | [根 README](../README.zh.md) |
+| 当前批准了什么工作？ | [ACTIVE](../ACTIVE.md) |
+| 会议应具备什么行为？ | [Draft PRD](product-requirements.zh.md)、[领域术语](../CONTEXT.md) |
+| Rust 转向决定了什么？ | [ADR 0002](decisions/0002-rust-source-transition.zh.md) |
+| 哪些架构约束与未决问题适用？ | [当前 Rust 提纲与任务路由](architecture/caption-meet-architecture.zh.md#task-reading-guide) |
+| 哪些事项尚未验证？ | [架构 gate](reference/architecture-gates.zh.md) |
+| Agent 如何在本仓工作？ | [AGENTS](../AGENTS.zh.md)；提出或修改应用代码前再全文读取[协作指南](guides/agent-collaboration.zh.md) |
 
-架构工作先扫描治理维度索引/标题，再按架构阅读导航细读适用项。受影响所有权、契约、安全和失败边界需要扩读，覆盖消费者与测试后停止。这是 Agent 主动路由，不是自动加载，也不是 `docs:verify` 能证明的行为。
+这些是阅读路由，不是实现证据。Rust 框架、媒体库及契约尚未确定。内核与 AGENTS 的基础阅读要求继续适用，只提及 ACTIVE 不能豁免。架构工作还须扫描[治理索引](guides/architecture-governance.md#index-dimensions-at-a-glance)并细读受影响维度。
 
-## Agent：仅在与提交相关时
+## 历史材料
 
-创建、修改或审查 commit message 时阅读 [`git-commit-convention.zh.md`](git-commit-convention.zh.md)（[English](git-commit-convention.md)）；日常编码不必读。
+[归档索引](archive/README.zh.md)收录已被替代的 C++ 架构、基线方案和原会话详细状态。[报告索引](reports/README.zh.md)记录已删除实现曾经通过、失败或未验证的事项。[讨论](discussions/)保留早期产品决定和探索。
 
-## 文档检查
+仅在具体历史问题需要时加载。这些材料不决定 Rust 接口，不恢复旧执行授权，也不证明当前运行行为。旧夹具命令需要对应历史源码和产物，不是当前环境搭建步骤。
 
-实质性文档变更后运行 `npm run docs:verify`。
+## 文档与提交
+
+按[双语规则](bilingual-documentation.zh.md)维护受影响的中英文对。实质性修改后运行 `npm run docs:verify`，并通过 `npm run check:deps` 检查源码清理与署名。这两条命令都不代表产品验收。
+
+创建、修改或审查提交时读取[提交规范](git-commit-convention.zh.md)；读取不等于获得提交授权。

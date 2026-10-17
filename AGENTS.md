@@ -10,19 +10,19 @@ On conflict: (1) `AGENTS.kernel.md` and agent playbooks; (2) `docs/product-requi
 
 ## Project facts
 
-- Confirmed product direction (2026-09-26): three-person LAN audio/video meetings with per-participant Chinese live captions; see the PRD for scope and Draft technical details. Browser UI and thin control services remain planned; media uses vendored RTCPilot.
+- Confirmed product direction (2026-09-26): three-person LAN audio/video meetings with per-participant Chinese live captions; see the PRD for scope and Draft technical details. Product implementation remains unimplemented. On 2026-10-14 the maintainer chose all-Rust maintained code and requested C++ removal; [ADR 0002](docs/decisions/0002-rust-source-transition.md) governs this transition. The older C++ architecture and reports are historical.
 - Initialization phase: do not describe planned MVP items as shipped (see kernel).
-- Target: browser (`apps/web`); optional Node business API (`server`).
-- **RTCPilot (SFU):** maintained in-repo at `third_party/RTCPilot/` per [ADR 0001](docs/decisions/0001-vendor-rtcpilot-in-tree.md); upstream lineage in `third_party/RTCPilot/UPSTREAM.md` and `LICENSE`.
-- **VoiceAgent:** external service; integrate via RTCPilot `voice_agent` config—not reimplemented in caption-meet. Recognition-only meeting suitability is unverified; proposing a different integration strategy requires an explicit decision.
+- Target: Rust browser application (`apps/web`), backend and SFU. Directories remain placeholders; no Rust framework or media library is selected. Existing Node/Python tooling awaits a separately scoped migration.
+- **RTCPilot:** C/C++ implementation and native dependencies removed; `third_party/RTCPilot/` retains historical documentation, `UPSTREAM.md`, `LICENSE` and dependency attribution. [ADR 0001](docs/decisions/0001-vendor-rtcpilot-in-tree.md) describes the previous source layout.
+- **VoiceAgent:** external runtime, not reimplemented here. The former RTCPilot bridge is removed. Rust integration contracts, recognition-only suitability and three-input isolation require verification before implementation.
 - Production builds must not depend on undeclared paths outside this repository (no required `../RTCPilot` sibling).
-- SFU and voice-agent behavior: RTCPilot/VoiceAgent docs and config in `third_party/RTCPilot`—not assumptions.
+- Historical RTCPilot/VoiceAgent docs describe the removed implementation, not capabilities of a future Rust SFU.
 
 ## Non-negotiables (L0) — product security
 
 - Secrets and VoiceAgent API keys must not ship in `apps/web` bundles or browser storage.
-- Browser uses RTCPilot signaling/WebRTC as documented; do not bypass SFU for media.
-- Do not reimplement the VoiceAgent loop inside this repo; integrate via RTCPilot `voice_agent`.
+- Browser media uses WebRTC through an SFU; the Rust signaling/media contracts remain to be defined and verified.
+- Keep the speech runtime external; implement only the scoped Rust integration after its contract is verified.
 - When editing `third_party/RTCPilot`, preserve upstream LICENSE/copyright notices; do not remove attribution.
 
 Kernel L0 still applies from `AGENTS.kernel.md`.
@@ -31,8 +31,8 @@ Kernel L0 still applies from `AGENTS.kernel.md`.
 
 - **UI:** `apps/web` (planned).
 - **Business:** `server` (planned).
-- **SFU / media:** `third_party/RTCPilot` (in-tree).
-- **Voice agent runtime:** VoiceAgent (external) via RTCPilot bridge.
+- **SFU / media:** Rust implementation planned; no source location or library selected.
+- **Voice agent runtime:** external; replacement Rust integration unresolved.
 
 ## Progressive loading
 
@@ -46,8 +46,8 @@ Kernel L0 still applies from `AGENTS.kernel.md`.
 
 | Task trigger | Read after the baseline |
 |-------------|------------|
-| RTCPilot / SFU / C++ | [RTCPilot README](third_party/RTCPilot/README.md), [ADR 0001](docs/decisions/0001-vendor-rtcpilot-in-tree.md), relevant source/tests and [architecture routes](docs/architecture/caption-meet-architecture.md#task-reading-guide); load [configuration guide](third_party/RTCPilot/config_guide.md) when configuration or integration is involved |
-| TypeScript application code or Node tooling | Relevant sections of [TypeScript / Node playbook](docs/guides/agent/typescript.md); TS-specific requirements do not apply to C++ or plain `.mjs`, and do not select the application stack |
+| Rust transition / SFU | [ADR 0002](docs/decisions/0002-rust-source-transition.md), [current architecture routes](docs/architecture/caption-meet-architecture.md#task-reading-guide) and affected gates; consult the [archive](docs/archive/README.md) only for a specific historical question |
+| Existing Node/TypeScript tooling | Applicable parts of the [legacy TypeScript / Node playbook](docs/guides/agent/typescript.md); TypeScript-only rules do not apply to plain `.mjs` or Rust and do not select the application stack |
 | Judgment / go-no-go | [Judgment playbook](docs/guides/agent/judgment.md) |
 | Modules, APIs, dependencies, contracts or ownership | [Architecture routes](docs/architecture/caption-meet-architecture.md#task-reading-guide), [governance index and applicable dimensions](docs/guides/architecture-governance.md#index-dimensions-at-a-glance) |
 | User-visible behavior / WI PRD assessment | [PRD](docs/product-requirements.md) and affected architecture sections |
@@ -63,6 +63,6 @@ Follow `AGENTS.kernel.md` § Task completion. Product-specific: `npm run docs:ve
 
 ## Upstream pointers
 
-- RTCPilot upstream: https://github.com/runner365/RTCPilot — vendored copy under `third_party/RTCPilot/`.
-- `voice_agent`: `third_party/RTCPilot/config_guide.md`; code under `third_party/RTCPilot/src/webrtc_room/voice_agent/`.
+- RTCPilot upstream: https://github.com/runner365/RTCPilot — attribution and historical documentation under `third_party/RTCPilot/`.
+- Historical `voice_agent` protocol/configuration: `third_party/RTCPilot/config_guide.md`; native bridge source removed.
 - VoiceAgent: https://github.com/runner365/VoiceAgent

@@ -2,6 +2,8 @@
 
 [English](2026-09-26-meeting-baseline.md) | 中文
 
+> **历史 C++ 证据（2026-10-14）：** 本文结果属于已删除的 RTCPilot 实现，测量、失败和未验证项按原记录保留。文中的状态、授权和复现命令属于当时语境，不代表 Rust 验收或当前执行授权。当前工作见 [ACTIVE](../../ACTIVE.md)，证据边界见[报告索引](README.zh.md)。
+
 - 翻译状态：Machine Draft
 - 权威原文：[2026-09-26-meeting-baseline.md](2026-09-26-meeting-baseline.md)
 - 原文版本：Uncommitted baseline
@@ -10,7 +12,7 @@
 - 状态：已执行，基线通过并保留明确缺口
 - 日期：2026-09-26（UTC）
 - 决策：spike-only，未关闭任何门禁
-- 授权：维护者已批准[基线方案](../plans/meeting-baseline-spike.zh.md)、执行，以及必要的小范围构建、兼容性和测试夹具修复，记录见 [ACTIVE](../../ACTIVE.md)。
+- 授权：维护者已批准[基线方案](../archive/2026-10-14-cpp-meeting-baseline-spike.zh.md)、执行，以及必要的小范围构建、兼容性和测试夹具修复，记录见 [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md)。
 - 范围：Debug 构建、直接执行现有测试、隔离浏览器媒体及清理验证。不涉及付费 API、ASR、产品实现、提交或推送。
 
 ## 结果
@@ -51,7 +53,7 @@ SFU 文本日志的月份比 UTC 小一；本报告以外部 UTC 和事件 JSON 
 
 ## 复现
 
-按[已批准方案](../plans/meeting-baseline-spike.zh.md)中的原始命令执行 Debug 配置、构建和三个带超时的直接测试。
+按[已批准方案](../archive/2026-10-14-cpp-meeting-baseline-spike.zh.md)中的原始命令执行 Debug 配置、构建和三个带超时的直接测试。
 选择全新目录，不删除已有构建。Debug 保留断言，测试端口 9002 必须空闲。
 先构建 SFU，再构建测试，以确保依赖已经生成。
 
@@ -105,8 +107,8 @@ C 立即重新加入时出现音频解复用 SDP 错误。
 服务端事件同时包含确切的两个旧 ID 和两个新 ID，排除了纯客户端重复订阅这一解释。
 更早一次未先建立媒体的缩减实验通过，保留它作为时序证据，不将其当作失败复现。
 
-按 `diagnosing-bugs` 流程，修复仅涉及 [room.cpp](../../third_party/RTCPilot/src/webrtc_room/room.cpp)
-和 [rtc_user.hpp](../../third_party/RTCPilot/src/webrtc_room/rtc_user.hpp)。
+按 `diagnosing-bugs` 流程，修复仅涉及 [room.cpp](https://github.com/Hex4C59/caption-meet/blob/de69f4d29d463321bd7a4ba3314c3debcbd8a47a/third_party/RTCPilot/src/webrtc_room/room.cpp)
+和 [rtc_user.hpp](https://github.com/Hex4C59/caption-meet/blob/de69f4d29d463321bd7a4ba3314c3debcbd8a47a/third_party/RTCPilot/src/webrtc_room/rtc_user.hpp)。
 重连时重新绑定响应回调并刷新活动时间，仅在此后的首次成功发布时移除之前的发布及对应路由。
 仅信令重连保留媒体，接收订阅保持完整，旧传输仍采用已有超时规则。
 线协议名称、WHIP 和外部 VoiceAgent 策略未改变。

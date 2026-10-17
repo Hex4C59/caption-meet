@@ -2,6 +2,8 @@
 
 [English](2026-09-26-physical-media-handoff.md) | 中文
 
+> **历史 C++ 证据（2026-10-14）：** 本文结果属于已删除的 RTCPilot 实现，测量、失败和未验证项按原记录保留。文中的状态、授权和复现命令属于当时语境，不代表 Rust 验收或当前执行授权。当前工作见 [ACTIVE](../../ACTIVE.md)，证据边界见[报告索引](README.zh.md)。
+
 - 类型：执行报告
 - 状态：独立预检已执行；实体设备验收未验证
 - 日期：2026-09-26
@@ -10,7 +12,7 @@
 - 原文版本：Uncommitted baseline
 - 最近同步：2026-09-26
 - 权威性：本轮实际执行证据，不代表产品验收或门禁关闭
-- 相关：[ACTIVE](../../ACTIVE.md)、[上一轮 WI-004](2026-09-26-lan-media-baseline.md)、[LAN 操作](../../scripts/baseline/LAN.md)、[WI-003](2026-09-26-pre-stun-expiry.md)、[WI-002](2026-09-26-meeting-baseline.md)
+- 相关：[ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md)、[上一轮 WI-004](2026-09-26-lan-media-baseline.md)、[LAN 操作](../../scripts/baseline/LAN.md)、[WI-003](2026-09-26-pre-stun-expiry.md)、[WI-002](2026-09-26-meeting-baseline.md)
 
 ## 结果与授权
 

@@ -1,5 +1,7 @@
 # WI-002 Browser Media Fixture
 
+> **Historical procedure (2026-10-14):** This guide targets the removed C++ RTCPilot implementation. Its commands require the corresponding historical source and build artifacts and are not current checkout setup instructions. The legacy JavaScript fixture is not a Rust application. See the [archive](../../docs/archive/README.md), [report index](../../docs/reports/README.md) and [current architecture](../../docs/architecture/caption-meet-architecture.md).
+
 This is an integration test, not the meeting application. Three independent
 Chrome processes publish synthetic tones and animated canvas tracks through
 RTCPilot. The fixture imports the pinned upstream `PCWrap` and

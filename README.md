@@ -5,62 +5,52 @@ English | [中文](README.zh.md)
 - Type: Guide
 - Status: Accepted
 - Created: 2026-09-21
+- Updated: 2026-10-14
 - Authority: product repository entry point
 
-**CaptionMeet** is being developed into a **three-person audio/video meeting tool with Chinese live captions**, for desktop Chrome on one LAN. The maintainer confirmed this direction on 2026-09-26 to build C++ RTC server experience. The browser product remains unimplemented; media uses the in-tree RTCPilot SFU.
+**CaptionMeet** targets three-person LAN audio/video meetings with per-participant Chinese live captions in desktop Chrome. On 2026-10-14, the maintainer chose Rust for all maintained application code and requested C++ removal as the first step; see [ADR 0002](docs/decisions/0002-rust-source-transition.md).
+
+## Current state
+
+The C/C++ SFU implementation, native tests, bundled native dependencies, build projects and native artifacts have been removed. **No Rust application or runnable SFU has been implemented by this cleanup.** Browser UI and business service directories remain placeholders; Rust libraries and frameworks remain unselected.
+
+Existing JavaScript/Python tools and fixtures remain for later migration. Previous C++ architecture, configuration and reports are historical references, not current build or Rust acceptance evidence. WI-004 was superseded without physical-device acceptance; see [ACTIVE](ACTIVE.md).
 
 ## Documentation
 
-Workflow and the current work item: [`docs/README.md`](docs/README.md), [`AGENTS.md`](AGENTS.md), [`ACTIVE.md`](ACTIVE.md).
+- Current work and authorization: [ACTIVE](ACTIVE.md).
+- Product scope, still Draft: [PRD](docs/product-requirements.md).
+- Rust transition and historical C++ design: [architecture](docs/architecture/caption-meet-architecture.md).
+- Agent instructions and navigation: [AGENTS](AGENTS.md), [documentation index](docs/README.md).
 
-Product scope (Draft PRD): [`docs/product-requirements.md`](docs/product-requirements.md). Architecture: [`docs/architecture/caption-meet-architecture.md`](docs/architecture/caption-meet-architecture.md).
+## Historical upstream references
 
-## Upstream open source
+RTCPilot supplied the removed C++ SFU. Its [MIT license](third_party/RTCPilot/LICENSE), [import provenance](third_party/RTCPilot/UPSTREAM.md), bundled dependency notices and protocol/configuration documentation remain under `third_party/RTCPilot/`. This is no longer a buildable vendor copy.
 
-This product builds on upstream projects. Respect their licenses and attribution:
+VoiceAgent remains an external speech-runtime reference. Recognition-only suitability, three-input isolation and replacement integration are unverified; no ASR/LLM/TTS runtime is implemented here. Credentials belong outside browser bundles and storage, and meeting media must still pass through an SFU.
 
-| Upstream | Role | License | Repository |
-|----------|------|---------|------------|
-| **RTCPilot** | WebRTC SFU: rooms, media forwarding, `voice_agent` integration | MIT | [github.com/runner365/RTCPilot](https://github.com/runner365/RTCPilot) |
-| **VoiceAgent** | Real-time voice agent (ASR / LLM / TTS, etc.) | See upstream | [github.com/runner365/VoiceAgent](https://github.com/runner365/VoiceAgent) |
+## Layout
 
-**RTCPilot** is vendored at [`third_party/RTCPilot/`](third_party/RTCPilot/) (MIT; see `LICENSE` and `UPSTREAM.md`). SFU changes are made in this repository. **VoiceAgent** remains a separate deployable service configured through RTCPilot.
-
-## Repository responsibilities
-
-| Part | Responsibility |
-|------|----------------|
-| **This repo** | Meeting UI/lifecycle and per-participant live captions (planned) |
-| `third_party/RTCPilot` | Join room, media path, VoiceAgent wiring (in-tree fork) |
-| VoiceAgent | External speech runtime; recognition-only suitability for meetings remains to be verified |
-
-## Layout (bootstrap)
-
-```
+```text
 caption-meet/
-├── README.md
 ├── ACTIVE.md / AGENTS.md
-├── third_party/
-│   └── RTCPilot/      # vendored SFU (MIT)
+├── apps/web/          # placeholder
+├── server/            # placeholder
+├── third_party/RTCPilot/  # historical docs, provenance and licenses
 ├── docs/
-├── apps/web/          # browser client (placeholder)
-├── server/            # thin business API (placeholder)
-└── scripts/           # local dev / doc checks
+└── scripts/           # existing tooling; Rust migration pending
 ```
-
-The name **CaptionMeet** combines live captions and meetings. This checkout was renamed from `voice-coach` to `caption-meet` on 2026-09-26. A local `voice-coach -> caption-meet` compatibility symlink preserves absolute paths in existing build caches, development TLS configuration and recorded experiment artifacts. Use `caption-meet` for new work; keep the symlink while reusing those artifacts.
-
-## Status
-
-The meeting scope is confirmed and the PRD remains Draft. WI-002 has measured Debug build, direct test and two/three-browser media results, including a focused rejoin repair; this is not a shipped meeting product or three-computer acceptance. See `ACTIVE.md`, the [execution report](docs/reports/2026-09-26-meeting-baseline.md) and the [baseline plan](docs/plans/meeting-baseline-spike.md).
 
 ## Checks
 
 ```bash
+npm test
 npm run docs:verify
 npm run check:deps
 ```
 
+These check existing tooling, documentation and source cleanup; they do not build or validate a Rust product. Documentation scans exclude Git-ignored local skills under `.agents`; repository links and English/Chinese pairs remain checked.
+
 ## Acknowledgments
 
-Thanks to the authors and contributors of [RTCPilot](https://github.com/runner365/RTCPilot) and [VoiceAgent](https://github.com/runner365/VoiceAgent). This repository is an application layer on top of their work.
+Thanks to the authors and contributors of RTCPilot and VoiceAgent. Historical source and license attribution are retained.

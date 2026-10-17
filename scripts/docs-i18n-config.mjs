@@ -15,9 +15,12 @@ export const REQUIRED_CHINESE_PAIRS = [
   'docs/guides/agent/judgment.md',
   'docs/reference/architecture-gates.md',
   'docs/architecture/caption-meet-architecture.md',
+  'apps/web/README.md',
+  'server/README.md',
+  'docs/reports/README.md',
 ];
 
-export const IGNORE_DIR_NAMES = new Set(['.git', 'node_modules', 'third_party', 'build']);
+export const IGNORE_DIR_NAMES = new Set(['.git', '.agents', 'node_modules', 'third_party', 'build']);
 
 export const VALID_TRANSLATION_STATUSES = new Set([
   'Machine Draft',

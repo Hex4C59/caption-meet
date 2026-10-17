@@ -5,12 +5,12 @@
 - 翻译状态：Human Reviewed
 - 权威原文：[bilingual-documentation.md](bilingual-documentation.md)
 - 原文版本：Uncommitted baseline
-- 最近同步：2026-09-26
+- 最近同步：2026-10-14
 
 - 类型：指南
 - 状态：Accepted
 - 创建：2026-09-19
-- 更新：2026-09-21
+- 更新：2026-10-14
 - 权威：CaptionMeet 产品仓库的语言配对规则
 - 相关：[`README.zh.md`](README.zh.md)、[`scripts/docs-i18n-config.mjs`](../scripts/docs-i18n-config.mjs)
 
@@ -38,6 +38,9 @@
 | `docs/guides/agent/judgment.md` | `docs/guides/agent/judgment.zh.md` |
 | `docs/reference/architecture-gates.md` | `docs/reference/architecture-gates.zh.md` |
 | `docs/architecture/caption-meet-architecture.md` | `docs/architecture/caption-meet-architecture.zh.md` |
+| `apps/web/README.md` | `apps/web/README.zh.md` |
+| `server/README.md` | `server/README.zh.md` |
+| `docs/reports/README.md` | `docs/reports/README.zh.md` |
 
 新增**权威**英文文档且需要双语时：在同一变更中加入 `REQUIRED_CHINESE_PAIRS` 与对应 `.zh.md`（或先将中文标为 `Stale`）。
 
@@ -45,7 +48,7 @@
 
 ## 不参与扫描的路径
 
-`docs-i18n-config.mjs` 的 `IGNORE_DIR_NAMES` 含 `third_party`。勿将 `third_party/RTCPilot/**` 加入必选配对；署名见 `LICENSE` / `UPSTREAM.md`。
+`docs-i18n-config.mjs` 的 `IGNORE_DIR_NAMES` 排除 `.git`、`.agents`、`node_modules`、`third_party` 和 `build`。Git 忽略的 `.agents` 保存本机技能材料，不属于仓库产品文档。勿将 `third_party/RTCPilot/**` 加入必选配对；署名见 `LICENSE` / `UPSTREAM.md`。
 
 ## 翻译生命周期（中文 `*.zh.md`）
 

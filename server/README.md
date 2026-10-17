@@ -1,5 +1,7 @@
-# 业务服务（占位）
+# Trusted meeting control (planned)
 
-CaptionMeet 的可选薄业务服务将放在此目录，用于会议创建与生命周期等控制逻辑；是否需要独立服务尚未确定，具体范围见[产品规格](../docs/product-requirements.zh.md)。
+English | [中文](README.zh.md)
 
-实时媒体仍由 RTCPilot 承担；本服务不替代 SFU。
+This directory is a placeholder for Rust meeting creation/lifecycle, admission and capacity control. Whether these responsibilities need a separate process and where authoritative state lives remain unresolved. A future Rust SFU owns media forwarding; the removed RTCPilot implementation is not a runtime dependency. No Rust backend is implemented here.
+
+Follow the [Draft PRD](../docs/product-requirements.md), [current architecture](../docs/architecture/caption-meet-architecture.md) and [ADR 0002](../docs/decisions/0002-rust-source-transition.md). Provider keys stay outside browser bundles/storage. Implementation needs a scoped work item in [ACTIVE](../ACTIVE.md).

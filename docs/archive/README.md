@@ -1,33 +1,33 @@
-# Archive (non-authoritative history)
+# Archive
 
 English | [中文](README.zh.md)
 
 - Type: Reference
 - Status: Accepted
-- Created: <!-- date -->
-- Authority: **historical context only**—superseded PRDs, WIs, spikes, and discussions
+- Updated: 2026-10-14
+- Authority: historical context only
 
-## Purpose
+## How to use the archive
 
-Move material here when it is **no longer active** but you want to keep an audit trail:
+[ADR 0002](../decisions/0002-rust-source-transition.md) replaced the C++ implementation direction with Rust. [ACTIVE](../../ACTIVE.md), the [PRD](../product-requirements.md) and [current architecture outline](../architecture/caption-meet-architecture.md) describe current scope and unresolved work.
 
-- Superseded `product-requirements.md` revisions (link from the current PRD).
-- Past WI proposals and session records that are too long for `ACTIVE.md`; unresolved work and effective constraints remain summarized in the live entry point.
-- Abandoned spikes with lessons learned.
+Archived states, commands and authorization retain their original context. They do not approve new execution, close gates or verify Rust. Preserve original failures and acceptance limits when citing them.
 
-Do **not** implement from archive files. Agents treat archive as read-only background.
+## Rust-transition archives
 
-## Archived records
+| Record | What it preserves |
+|--------|-------------------|
+| [Previous C++ meeting architecture](2026-10-14-cpp-meeting-architecture.md) ([Chinese](2026-10-14-cpp-meeting-architecture.zh.md)) | RTCPilot/libuv/CMake proposal, C-01 through C-06, ownership and historical evidence |
+| [Executed C++ baseline plan](2026-10-14-cpp-meeting-baseline-spike.md) ([Chinese](2026-10-14-cpp-meeting-baseline-spike.zh.md)) | WI-002 build/test and synthetic-browser procedure, requiring historical source/artifacts |
+| [ACTIVE before documentation cleanup](2026-10-14-pre-doc-cleanup-active.md) | Completed WI-005 source cleanup and superseded WI-004 details, including uncompleted physical acceptance |
 
-- [Session history before the 2026-09-26 cleanup](2026-09-26-active-history.md): original WI-001 through WI-004 proposals, authorization history and maintenance notes. Archiving these records does not accept work or close gates; [ACTIVE](../../ACTIVE.md) owns current continuation.
-- [Historical coaching architecture](2026-09-26-coaching-architecture.md) ([Chinese](2026-09-26-coaching-architecture.zh.md)): the prior proposal, including single-human/AI assumptions and Practice APIs. The [current architecture](../architecture/caption-meet-architecture.md) identifies retained constraints and unresolved meeting design.
+The [report index](../reports/README.md) retains C++ execution results at their existing paths. The [legacy fixture guides](../../scripts/baseline/README.md) are historical procedures, not current setup instructions.
 
-## Before moving a file
+## Earlier records
 
-1. Note **why** it was superseded (one line at the top of the archived file or in an ADR).
-2. Ensure the **current** truth lives in PRD (`Accepted`), architecture, gates, ADRs, or `ACTIVE.md`.
-3. Prefer `YYYY-MM-DD-original-name.md` under `docs/archive/` (flat or subfolders by year).
+- [Session history before the 2026-09-26 cleanup](2026-09-26-active-history.md): WI-001 through WI-004 proposals, authorization and maintenance history.
+- [Coaching architecture](2026-09-26-coaching-architecture.md) ([Chinese](2026-09-26-coaching-architecture.zh.md)): the superseded single-human/AI proposal and Practice APIs.
 
-## Agent rule
+## Adding an archive
 
-If archive text conflicts with current authoritative docs, ignore archive and cite the live file.
+Record why and when the material was superseded, retain useful evidence, and link the current source of truth. Use a dated filename, update affected relative paths/fragments and synchronize existing translations. Archiving does not accept unresolved work.

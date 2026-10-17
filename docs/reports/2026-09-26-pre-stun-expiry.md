@@ -2,8 +2,10 @@
 
 English | [中文](2026-09-26-pre-stun-expiry.zh.md)
 
+> **Historical C++ evidence (2026-10-14):** Results belong to the removed RTCPilot implementation; original measurements, failures and unverified items are preserved. States, authorization and reproduction commands describe that session, not Rust acceptance or current execution authorization. See [ACTIVE](../../ACTIVE.md) for current work and the [report index](README.md) for evidence limits.
+
 - Date: 2026-09-26; execution report, not product acceptance.
-- Authorization: diagnosis, regression tests, minimal C++ repair and necessary fixtures, recorded in [ACTIVE](../../ACTIVE.md).
+- Authorization: diagnosis, regression tests, minimal C++ repair and necessary fixtures, recorded in [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md).
 - Base HEAD: `eb9e05b7973d5b703687d95cae50e9da7c7b2b5e`; existing dirty/untracked work preserved. No commit or push.
 - Previous evidence: [WI-002](2026-09-26-meeting-baseline.md), including its 25-created/22-destroyed audit, remains unchanged. That audit alone did not prove a leak.
 - Scope: the existing single-loop SFU's inactivity expiry. No product, ASR, paid API, integration-policy or graceful-shutdown change; no gate is closed.

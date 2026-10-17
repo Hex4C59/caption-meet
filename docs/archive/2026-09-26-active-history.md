@@ -30,7 +30,7 @@ English operational note: Living session state. Process: `docs/guides/agent-coll
 | **ID** | WI-004 |
 | **Title** | LAN HTTPS/WSS and physical-device media baseline |
 | **Phase** | Build |
-| **Architecture** | Browser adapter, C-02/C-05/C-06 and trust boundaries in the [Proposed architecture](../../docs/architecture/caption-meet-architecture.md) |
+| **Architecture** | Browser adapter, C-02/C-05/C-06 and trust boundaries in the [Proposed architecture](2026-10-14-cpp-meeting-architecture.md) |
 | **Gate ID** | `gate-rtc-signaling`, `gate-sfu-build`, `gate-session-admission` |
 | **Decision** | `spike-only` - explicitly authorized trusted-LAN test fixture, no production deployment or gate closure |
 | **PRD assessment** | technical-only: fixture evidence supporting REQ-002, REQ-004 and REQ-013; no meeting product delivery |
@@ -159,7 +159,7 @@ failures remain separately recorded.
 | **ID** | WI-003 |
 | **Title** | Pre-STUN session expiry and resource reclamation |
 | **Phase** | Build |
-| **Architecture** | [Lifecycle and ownership](../../docs/architecture/caption-meet-architecture.md#task-reading-guide), C-05; Proposed constraints |
+| **Architecture** | [Lifecycle and ownership](2026-10-14-cpp-meeting-architecture.md#task-reading-guide), C-05; Proposed constraints |
 | **Gate ID** | `gate-sfu-lifecycle`, `gate-sfu-build` |
 | **Decision** | `none` - bounded repair; no policy change or gate closure |
 | **PRD assessment** | technical-only: transport expiry regression supporting REQ-013; no new meeting feature |
@@ -211,7 +211,7 @@ Any necessary expansion requires concrete evidence and a bounded proposal.
 | **ID** | WI-002 |
 | **Title** | Meeting media baseline: build and browser interoperability |
 | **Phase** | Build |
-| **Architecture** | [Proposed architecture](../../docs/architecture/caption-meet-architecture.md), with the meeting scope transition noted |
+| **Architecture** | [Proposed architecture](2026-10-14-cpp-meeting-architecture.md), with the meeting scope transition noted |
 | **Gate ID** | `gate-sfu-build`, `gate-rtc-signaling` |
 | **Decision** | `spike-only` |
 | **PRD assessment** | technical-only: prepare and validate the media baseline supporting REQ-002, REQ-004 and REQ-013; no meeting feature delivered by this proposal |
@@ -226,7 +226,7 @@ Any necessary expansion requires concrete evidence and a bounded proposal.
   and authorized specification preparation plus the first technical-validation proposal.
 - The [PRD](../../docs/product-requirements.md) now describes the three-person LAN meeting;
   its scope choices are confirmed, while technical defaults remain Draft.
-- Execution followed the [baseline plan](../../docs/plans/meeting-baseline-spike.md):
+- Execution followed the [baseline plan](2026-10-14-cpp-meeting-baseline-spike.md):
   clean Debug build, direct existing tests, then two-browser and three-browser audio/video.
 - Use the repo's existing local work tracking: this file owns the current WI, and
   PRD requirement IDs own scope. No external tracker publication is authorized.
@@ -288,7 +288,7 @@ direction supersedes the old proposed coaching implementation queue.
 | **ID** | WI-001 |
 | **Title** | Docs baseline + dependency check + RTCPilot read-only spike |
 | **Phase** | Build |
-| **Architecture** | [`docs/architecture/caption-meet-architecture.md`](../../docs/architecture/caption-meet-architecture.md) |
+| **Architecture** | [`docs/architecture/caption-meet-architecture.md`](2026-10-14-cpp-meeting-architecture.md) |
 | **Gate ID** | `gate-docs-baseline`, `gate-voice-agent-bridge`, `gate-repo-layout` |
 | **Decision** | `spike-only` |
 | **PRD assessment** | technical-only: WI-001 establishes workflow, PRD MVP outline only; no user-visible delivery |

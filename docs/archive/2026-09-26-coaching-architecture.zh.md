@@ -11,7 +11,7 @@
 - 状态：Superseded — 仅历史背景
 - 归档日期：2026-09-26
 - 原文状态：Proposed；契约全部 Outline
-- 权威：不具有当前实现权威；[当前架构](../architecture/caption-meet-architecture.zh.md)、[PRD](../product-requirements.zh.md) 与 [ACTIVE](../../ACTIVE.md) 决定当前适用内容
+- 权威：不具有当前实现权威；[当前架构](2026-10-14-cpp-meeting-architecture.zh.md)、[PRD](../product-requirements.zh.md) 与 [ACTIVE](../../ACTIVE.md) 决定当前适用内容
 
 > **归档原因：** 维护者于 2026-09-26 确认局域网三人音视频会议和逐人中文字幕，取代了单真人陪练、主题练习和必需的 AI 语音回复假设。下文保留整理前的完整设计正文，包括总览图、Practice API、AI 发布器与历史迁移顺序，供追溯设计依据；不批准执行这些流程。
 >

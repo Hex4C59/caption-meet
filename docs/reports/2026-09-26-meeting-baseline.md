@@ -2,11 +2,13 @@
 
 English | [中文](2026-09-26-meeting-baseline.zh.md)
 
+> **Historical C++ evidence (2026-10-14):** Results belong to the removed RTCPilot implementation; original measurements, failures and unverified items are preserved. States, authorization and reproduction commands describe that session, not Rust acceptance or current execution authorization. See [ACTIVE](../../ACTIVE.md) for current work and the [report index](README.md) for evidence limits.
+
 - Type: Execution report
 - Status: Executed - baseline passed with explicit gaps
 - Date: 2026-09-26 (UTC)
 - Decision: spike-only; no gate closed
-- Authorization: maintainer approved the [baseline plan](../plans/meeting-baseline-spike.md), execution and small necessary build, compatibility and fixture repairs; recorded in [ACTIVE](../../ACTIVE.md).
+- Authorization: maintainer approved the [baseline plan](../archive/2026-10-14-cpp-meeting-baseline-spike.md), execution and small necessary build, compatibility and fixture repairs; recorded in [ACTIVE](../archive/2026-10-14-pre-doc-cleanup-active.md).
 - Scope: Debug build, direct existing tests, isolated browser media and cleanup. No paid API, ASR, product implementation, commit or push.
 
 ## Results
@@ -45,7 +47,7 @@ Existing CMake policy/deprecation, compiler signedness and OpenSSL Perl warnings
 
 ## Reproduce
 
-Run the exact Debug configure/build and three direct timeout commands in the [approved plan](../plans/meeting-baseline-spike.md). Choose a fresh directory rather than deleting an existing build. Debug retains assertions; test port 9002 must be free. Build the SFU before the tests to make dependencies available.
+Run the exact Debug configure/build and three direct timeout commands in the [approved plan](../archive/2026-10-14-cpp-meeting-baseline-spike.md). Choose a fresh directory rather than deleting an existing build. Debug retains assertions; test port 9002 must be free. Build the SFU before the tests to make dependencies available.
 
 The [browser fixture instructions](../../scripts/baseline/README.md) pin checkout/dependencies and give both the original example startup and the experimental runner. Generate independent configuration and start services in separate terminals:
 
@@ -85,7 +87,7 @@ Alice/Bob/Charlie publish synthetic 440/660/880 Hz audio and animated 640x360 ca
 
 Initial two/three-browser media and A/B continuity after C left passed. C's immediate rejoin failed with an audio demultiplexing SDP error. An established two-browser reduction failed with `bob advertised audio,audio,video,video`; server events included the exact two old IDs and two new IDs. This rules out a purely client-side duplicate subscription. An earlier reduction without established media passed and is retained as timing evidence, not a failing reproduction.
 
-Following `diagnosing-bugs`, the repair touches only [room.cpp](../../third_party/RTCPilot/src/webrtc_room/room.cpp) and [rtc_user.hpp](../../third_party/RTCPilot/src/webrtc_room/rtc_user.hpp). Reconnect rebinds the response callback and refreshes activity. Only its first successful subsequent push removes the previous publications and their routes. Signaling-only reconnection preserves media, receiving subscriptions remain intact, and old transports retain existing expiry. Wire names, WHIP and the external VoiceAgent strategy are unchanged.
+Following `diagnosing-bugs`, the repair touches only [room.cpp](https://github.com/Hex4C59/caption-meet/blob/de69f4d29d463321bd7a4ba3314c3debcbd8a47a/third_party/RTCPilot/src/webrtc_room/room.cpp) and [rtc_user.hpp](https://github.com/Hex4C59/caption-meet/blob/de69f4d29d463321bd7a4ba3314c3debcbd8a47a/third_party/RTCPilot/src/webrtc_room/rtc_user.hpp). Reconnect rebinds the response callback and refreshes activity. Only its first successful subsequent push removes the previous publications and their routes. Signaling-only reconnection preserves media, receiving subscriptions remain intact, and old transports retain existing expiry. Wire names, WHIP and the external VoiceAgent strategy are unchanged.
 
 Regression checks cover the original failure, signaling-only continuity, later notification delivery to a rejoined user, and media beyond old-transport expiry. General failed-publish rollback, simultaneous identity takeover, authorization and graceful shutdown remain outside this repair.
 

@@ -2,6 +2,8 @@
 
 English | [中文](0001-vendor-rtcpilot-in-tree.zh.md)
 
+> **Source decision superseded (2026-10-14):** [ADR 0002](0002-rust-source-transition.md) replaced in-tree C++ source maintenance with the Rust direction. This record preserves the original decision; its attribution requirements remain in force.
+
 - Type: Architecture decision
 - Status: Accepted
 - Created: 2026-09-21

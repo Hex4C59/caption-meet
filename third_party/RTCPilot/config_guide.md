@@ -1,5 +1,7 @@
 # RTCPilot 配置指南
 
+> **CaptionMeet historical reference (2026-10-14):** The C++ RTCPilot implementation described here was removed under [ADR 0002](../../docs/decisions/0002-rust-source-transition.md). Configuration, protocols and product-direction text below are upstream/legacy references, not selected Rust behavior or current startup instructions.
+
 说明：本文件基于 `RTCPilot/RTCPilot/config.yaml`，逐项说明配置字段含义与推荐值。修改配置后请重启服务以生效。
 
 ## 日志（`log`）

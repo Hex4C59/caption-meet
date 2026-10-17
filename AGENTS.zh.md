@@ -5,7 +5,7 @@
 - 翻译状态：Machine Draft
 - 权威原文：[AGENTS.md](AGENTS.md)
 - 原文版本：Uncommitted baseline
-- 最近同步：2026-09-26
+- 最近同步：2026-10-14
 
 **CaptionMeet** 产品叠加层。通用规则见 [`AGENTS.kernel.zh.md`](AGENTS.kernel.zh.md)。
 
@@ -15,27 +15,29 @@
 
 ## 项目事实
 
-- 已确认产品方向（2026-09-26）：局域网三人音视频会议与逐人中文字幕；范围和 Draft 技术细节见 PRD。浏览器 UI 与薄控制服务仍为规划，媒体使用仓内 RTCPilot。
-- 初始化阶段：勿将 MVP 规划描述为已交付。
-- 目标：`apps/web`；可选 Node `server`。
-- **RTCPilot（SFU）：** `third_party/RTCPilot/`（[ADR 0001](docs/decisions/0001-vendor-rtcpilot-in-tree.zh.md)）；来源见 `UPSTREAM.md` 与 `LICENSE`。
-- **VoiceAgent：** 外部服务；经 RTCPilot `voice_agent` 配置集成，不在本仓重实现。会议纯识别适配尚未验证，提议不同集成策略须形成明确决策。
-- 生产构建不得依赖本仓库外的未声明路径（不要求 `../RTCPilot` 兄弟仓）。
-- SFU 行为以 `third_party/RTCPilot` 内文档与配置为准。
+- 已确认产品方向（2026-09-26）：三人局域网音视频会议与逐人中文字幕；范围与 Draft 技术细节见 PRD。
+- 维护者于 2026-10-14 选择全部自行维护代码使用 Rust，并要求先删除 C++；本次转向以 [ADR 0002](docs/decisions/0002-rust-source-transition.md) 为准。旧 C++ 架构与报告为历史材料，产品实现仍未完成。
+- 目标：Rust 浏览器应用（`apps/web`）、后端与 SFU。目录仍为占位，Rust 框架和媒体库未选定；现有 Node/Python 工具留待另行确定迁移范围。
+- **RTCPilot：** C/C++ 实现及原生依赖已删除；`third_party/RTCPilot/` 保留历史文档、`UPSTREAM.md`、`LICENSE` 及依赖署名。[ADR 0001](docs/decisions/0001-vendor-rtcpilot-in-tree.md) 描述旧源码布局。
+- **VoiceAgent：** 外部运行时，本仓不重实现。原 RTCPilot 桥接已删除；Rust 接入契约、仅识别模式与三路隔离须先验证。
+- 生产构建不得依赖仓库外未声明路径，不要求 `../RTCPilot` 相邻仓。
+- 历史 RTCPilot/VoiceAgent 文档描述已删除的实现，不证明未来 Rust SFU 的能力。
 
 ## 不可协商（L0）
 
-- 密钥与 VoiceAgent API 不得进入前端包或浏览器存储。
-- 浏览器按 RTCPilot 信令/WebRTC 对接，不绕过 SFU。
-- 不在本仓重实现 VoiceAgent 循环。
-- 修改 `third_party/RTCPilot` 时须保留上游 LICENSE 与版权声明。
+- 密钥及 VoiceAgent API key 不得进入 `apps/web` 产物或浏览器存储。
+- 浏览器媒体通过 WebRTC 与 SFU；Rust 信令/媒体契约仍须定义并验证。
+- 语音运行时保持外置；契约验证后仅实现已确定范围的 Rust 接入。
+- 编辑 `third_party/RTCPilot` 时保留上游 LICENSE、版权声明与署名。
+
+内核 L0 继续适用。
 
 ## 分层（L1）
 
-- **UI：** `apps/web`（规划）
-- **业务：** `server`（规划）
-- **SFU / 媒体：** `third_party/RTCPilot`（仓内）
-- **语音智能体运行时：** 外部 VoiceAgent，经 RTCPilot 桥接
+- **UI：** `apps/web`（计划）。
+- **业务：** `server`（计划）。
+- **SFU / 媒体：** 计划用 Rust 实现，源码位置和库未选定。
+- **语音运行时：** 外置，替代 Rust 接入尚未确定。
 
 ## 渐进式加载
 
@@ -51,8 +53,8 @@
 
 | 任务触发 | 基础阅读之后加载 |
 |------|------|
-| RTCPilot / SFU / C++ | [RTCPilot README](third_party/RTCPilot/README.md)、[ADR 0001](docs/decisions/0001-vendor-rtcpilot-in-tree.md)、相关源码/测试及[架构路由](docs/architecture/caption-meet-architecture.md#task-reading-guide)；涉及配置或集成时读[配置指南](third_party/RTCPilot/config_guide.md) |
-| TypeScript 应用或 Node 工具 | [TypeScript / Node playbook](docs/guides/agent/typescript.md) 的适用章节；TS 专属要求不适用于 C++ 或纯 `.mjs`，也不决定应用选型 |
+| Rust 转向 / SFU | [ADR 0002](docs/decisions/0002-rust-source-transition.md)、[当前架构路由](docs/architecture/caption-meet-architecture.md#task-reading-guide)及受影响 gate；仅为具体历史问题加载[归档](docs/archive/README.md) |
+| 现有 Node/TypeScript 工具 | [旧 TypeScript / Node playbook](docs/guides/agent/typescript.md) 的适用章节；TypeScript 专属规则不适用于纯 `.mjs` 或 Rust，也不决定应用选型 |
 | 判断 / 是否继续 | [判断指南](docs/guides/agent/judgment.md) |
 | 模块、API、依赖、契约、所有权 | [架构路由](docs/architecture/caption-meet-architecture.md#task-reading-guide)、[治理索引及适用维度](docs/guides/architecture-governance.md#index-dimensions-at-a-glance) |
 | 用户可见行为 / WI 的 PRD 判定 | [PRD](docs/product-requirements.md) 与相关架构章节 |
@@ -68,6 +70,6 @@
 
 ## 上游
 
-- RTCPilot 上游：https://github.com/runner365/RTCPilot — 仓内副本 `third_party/RTCPilot/`。
-- `voice_agent`：`third_party/RTCPilot/config_guide.md`；代码 `third_party/RTCPilot/src/webrtc_room/voice_agent/`。
+- RTCPilot 上游：https://github.com/runner365/RTCPilot — 署名与历史文档保留在 `third_party/RTCPilot/`。
+- 历史 `voice_agent` 协议/配置：`third_party/RTCPilot/config_guide.md`；原生桥接源码已删除。
 - VoiceAgent：https://github.com/runner365/VoiceAgent

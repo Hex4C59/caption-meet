@@ -26,4 +26,5 @@ Do **not** write Accepted ADRs at first proposal or before a failed spike is und
 
 | ID | Title | Gate | File |
 |----|-------|------|------|
-| 0001 | Vendor RTCPilot in-tree | `gate-repo-layout` | [0001-vendor-rtcpilot-in-tree.md](0001-vendor-rtcpilot-in-tree.md) |
+| 0001 | Vendor RTCPilot in-tree (historical; source-maintenance decision superseded by 0002) | `gate-repo-layout` | [0001-vendor-rtcpilot-in-tree.md](0001-vendor-rtcpilot-in-tree.md) |
+| 0002 | Rust transition and C/C++ source removal | `gate-repo-layout` | [0002-rust-source-transition.md](0002-rust-source-transition.md) |
